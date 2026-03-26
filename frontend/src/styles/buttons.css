@@ -1,0 +1,28 @@
+.btn{
+    padding: .75rem 1rem;
+    font-size: 14px;  
+    border-radius: .4rem;  
+    font-weight: 600;
+    font-size: 14px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: .5rem;
+    border: none;
+    outline: none;
+    text-transform: capitalize;
+    align-self: center;
+}
+.btn-classic{
+    background-color: rgb(225, 225, 225);
+    color: rgb(32, 32, 32);
+}
+.btn-black{
+    font-size: 12px;
+    padding: .2rem 1rem;
+    color: white;
+    background-color: black;
+}
+.sparkle-img{
+    height: 30px;
+}

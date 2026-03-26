@@ -1,0 +1,27 @@
+@import url("./app.css");
+@import url("./styles/navbar.css");
+@import url("./styles/home.css");
+@import url("./styles/buttons.css");
+@import url("./styles/search_result.css");
+@import url("./styles/animations.css");
+@import url("./styles/auth.css");
+@import url("./styles/policy.css");
+@import url("./styles//bookmarks.css");
+@import url("./styles/trending.css");
+@import url("./styles/wordOTD.css");
+@import url("./styles/dashboard.css");
+@import url("./styles/components.css");
+@import url("./styles/searchBar.css");
+@import url("./styles/wordSkeleton.css");
+:root{
+  --grey-outline:rgb(208, 208, 208);
+}
+
+
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter Tight", sans-serif;
+  text-transform: none;
+}

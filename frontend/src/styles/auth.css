@@ -1,0 +1,142 @@
+#root{
+    --light-grey: rgb(155, 155, 155);
+    --blue:#0659D7;
+}
+
+.auth-main{
+    /* background-color:rgb(0, 115, 255); */
+    /* background-color: lightblue; */
+    width: 50vw;
+    height: 100%;
+    padding: 4rem 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.auth-box{
+    /* background-color: lightcoral; */
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+    /* width: 50%; */
+    padding: 0 5rem;
+    height: 100%;
+    gap: 3rem;
+    flex-direction: column;
+    background-color: white;
+}
+.txt-box{
+    /* background-color: lightpink; */
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .25rem;
+}
+.txt-box h1{
+    font-size: 24px;
+    text-transform: capitalize;
+    font-weight:600;
+}
+.txt-box p{
+    /* color: rgb(155, 155, 155); */
+    color: var(--light-grey);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.auth-input-container{
+    /* background-color: plum; */
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.auth-box form{
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    /* background-color: lightblue; */
+}
+
+.auth-input-container .auth-input-box{
+    background-color: rgb(253, 253, 253);
+    height: 35px;
+    width: 20rem;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch ;
+    justify-content: flex-start;
+    padding: 0 .75rem;
+    gap: .5rem;
+    border-radius: 5px;
+    border: .25px solid rgb(206, 206, 206);
+}
+
+.auth-input-container .auth-input-box input{
+    background-color: transparent;
+    outline: none;
+    border: none;
+    flex: 1 ;
+    font-weight: 500;
+    color: var(--light-grey);
+    color: rgb(13, 13, 13);
+    padding: 0 .5rem;
+}
+.auth-input-icon{
+    background-color: transparent;
+    height: 100%;
+    aspect-ratio: 1/1;
+    width: 18px;
+    /* color: rgb(121, 121, 121); */
+    color: var(--light-grey);
+    stroke-width: 1.75px;
+}
+.pass-visibility-Btn{
+    background-color: transparent;
+    outline: none;
+    border: none;
+}
+
+.signBtn{
+    width: 100%;
+    height: 35px;
+    outline: none;
+    border: none;
+    /* background-color: var(--blue); */
+    background-color: black;
+    border-radius: 5px;
+    color: white;
+    font-weight: 500;
+    font-size: 12px;
+}
+.acc-txt{
+    /* background-color: #0659D7; */
+    width: 100%;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--light-grey);
+    text-transform: capitalize;
+}
+.acc-txt .crAcc-txt{
+    /* color:#0659D7; */
+    color: black;
+    font-weight: 700;
+    text-transform: capitalize;
+    margin-left: 5px;
+    text-decoration: none;
+}
+
+.auth-error{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: red;
+    text-align: center;
+    padding: .5rem;
+    color: white;
+    font-weight: 500;
+    font-size: 14px;
+}

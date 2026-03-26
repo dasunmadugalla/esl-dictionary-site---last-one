@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&display=swap');
+
+body{
+  background-color: rgb(255, 255, 255);
+}
+#root{
+  /* height: 100vh; */
+  display: flex;
+  /* justify-content: space-evenly; */
+  align-items: stretch;
+  flex-direction: row;
+  /* padding: .75em; */
+  box-sizing: border-box;
+  /* gap: .75em; */
+}
+button{
+  cursor: pointer;
+}
+@media (max-width:700px) {
+    #root{
+    flex-direction: column;
+    padding: 0;
+    gap: 0;
+  } 
+  body{
+    background-color: white;
+  }
+}
