@@ -1,8 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&display=swap');
-
 body{
-  background-color: rgb(255, 255, 255);
+  background-color: var(--bg);
+  color: var(--text-1);
 }
 #root{
   /* height: 100vh; */
@@ -17,6 +15,19 @@ body{
 button{
   cursor: pointer;
 }
+.page-content {
+  margin-left: 56px;
+  width: calc(100% - 56px);
+  min-height: 100vh;
+}
+
+@media (max-width: 700px) {
+  .page-content {
+    margin-left: 0;
+    width: 100%;
+    padding-top: 3.25rem;
+  }
+}
 @media (max-width:700px) {
     #root{
     flex-direction: column;
@@ -24,6 +35,6 @@ button{
     gap: 0;
   } 
   body{
-    background-color: white;
+    background-color: var(--bg);
   }
 }

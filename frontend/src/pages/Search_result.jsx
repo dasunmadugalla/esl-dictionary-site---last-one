@@ -1,5 +1,6 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext } from "react";
 import { useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import Word_container from "../components/Word_container";
 import { supabase } from "../lib/supabase";
 import { IPContext } from "../context/IPContext";
@@ -8,78 +9,39 @@ import WordSkeleton from "../components/WordSkeleton";
 import Searchbar from "../components/Searchbar";
 
 function Search_result() {
-  const [searchResult, setSearchResult] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
   const { ip } = useContext(IPContext);
   const { search } = useParams();
 
-  useEffect(() => {
-    if (!search) return;
+  const { data: searchResult, isLoading, error } = useQuery({
+    queryKey: ["word", search],
+    queryFn: async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token;
 
-    const fetchResult = async () => {
-      try {
-        setLoading(true);
-        setError(null);
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+      const res = await fetch(`${ip}:3000/word/${encodeURIComponent(search)}`, { headers });
 
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
-        const token = session?.access_token;
-
-        if (!token) {
-          setError("You must be logged in to search words.");
-          setSearchResult(null);
-          return;
-        }
-
-        const res = await fetch(
-          `${ip}:3000/word/${encodeURIComponent(search)}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (!res.ok) {
-          throw new Error(`Server error: ${res.status}`);
-        }
-
-        const data = await res.json();
-        setSearchResult(data);
-      } catch (err) {
-        console.error("Fetch error:", err);
-        setError("Something went wrong. Please try again.");
-        setSearchResult(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchResult();
-  }, [search]);
-
-  // ── Content slot ──────────────────────────────────────────────────────────
-  // Searchbar always stays rendered. Only the content below it swaps.
+      if (!res.ok) throw new Error(`Server error: ${res.status}`);
+      return res.json();
+    },
+    enabled: !!search && !!ip,
+    staleTime: 10 * 60 * 1000, // word definitions don't change — cache 10 mins
+  });
 
   const renderContent = () => {
-    if (loading) {
-      return <WordSkeleton />;
-    }
+    if (isLoading) return <WordSkeleton />;
 
     if (error) {
       return (
-        <div className="srch-wrapper">
-          <p className="result-error">{error}</p>
+        <div className="word-result-wrapper">
+          <p className="result-error">{error.message}</p>
         </div>
       );
     }
 
     if (!searchResult) {
       return (
-        <div className="srch-wrapper">
+        <div className="word-result-wrapper">
           <p className="result-empty">No results found for "{search}".</p>
         </div>
       );
@@ -89,14 +51,14 @@ function Search_result() {
   };
 
   return (
-    <div className="search_result-main">
+    <div className="search-result-page">
       <div className="middle-container">
         <div className="input-wrapper">
           <Searchbar />
         </div>
         {renderContent()}
       </div>
-      {!loading && <Recently_viewed />}
+      {!isLoading && <Recently_viewed />}
     </div>
   );
 }

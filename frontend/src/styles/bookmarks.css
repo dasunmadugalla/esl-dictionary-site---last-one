@@ -18,27 +18,26 @@
 }
 .bookmark-card {
   cursor: pointer;
-  background-color: rgb(242, 243, 242);
+  background-color: var(--bg-subtle);
   width: 100%;
   display: flex;
   justify-content: space-between;
   gap: 2rem;
-  /* border: 1px solid rgb(32, 70, 222); */
   padding: 1rem;
   border-radius: 7.5px;
   box-shadow:
     0 2px 0 rgba(0, 0, 0, 0.05),
-    /* subtle bottom edge */ 0 6px 12px rgba(0, 0, 0, 0.08); /* soft outer glow */
+    0 6px 12px rgba(0, 0, 0, 0.08);
 }
 .bookmark-content {
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
 }
-.bookmark-card .bk-star{
+.bookmark-card .bookmark-star{
     font-size: 18px ;
 }
-.bk-word {
+.bookmark-word {
   font-size: 16px;
   font-weight: 600;
   text-transform: capitalize;
@@ -57,19 +56,55 @@
  /*  */
 
 
- /* 🔹 Sort Controls */
+.bookmarks-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.bookmarks-title {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.bookmarks-count {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 1.5rem;
+  height: 1.5rem;
+  padding: 0 0.4rem;
+  border-radius: 999px;
+  background-color: var(--text-1);
+  color: var(--bg);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.bookmark-controls {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+/* 🔹 Sort Controls */
 .sort-controls {
   display: flex;
-  gap: 8px;
-  margin-bottom: 16px;
+  gap: 6px;
+  flex-wrap: wrap;
 }
 
 .sort-controls button {
   /* padding: 8px 14px; */
   padding: 4px 10px;
   border-radius: 7.5px;
-  border: 1px solid #ddd;
-  background: #ffffff;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
   font-weight: 600;
   font-size: 13px;
   transition: all 0.2s ease;
@@ -77,20 +112,132 @@
 
 /* hover */
 .sort-controls button:hover {
-  background: #f5f5f5;
+  background: var(--bg-hover);
 }
 
 /* active button */
 .sort-controls button.active {
-  background: #000;
-  color: #fff;
-  border-color: #000;
+  background: var(--text-1);
+  color: var(--bg);
+  border-color: var(--text-1);
 }
 
-.bookmark-card:hover {
-  transform: translateY(-2px);
-  /* box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08); */
+.frequency-filter {
+  position: relative;
+  font-size: 13px;
+  font-weight: 600;
+  outline: none;
+  user-select: none;
 }
+
+.frequency-filter-selected {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+  padding: 4px 10px;
+  width: 110px;
+  border-radius: 7.5px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.frequency-filter-selected:hover {
+  border-color: #aaa;
+}
+
+.frequency-filter-arrow {
+  font-size: 11px;
+  color: #999;
+  transition: transform 0.2s;
+  display: inline-block;
+}
+
+.frequency-filter-arrow.open {
+  transform: rotate(180deg);
+}
+
+.frequency-filter:focus-within .frequency-filter-selected {
+  border-radius: 7.5px 7.5px 0 0;
+  border-bottom-color: transparent;
+}
+
+.frequency-filter-list {
+  position: absolute;
+  top: calc(100% - 1px);
+  right: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 7.5px 7.5px;
+  list-style: none;
+  padding: 4px 0;
+  margin: 0;
+  min-width: 100%;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+}
+
+.frequency-filter-option {
+  padding: 7px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  color: var(--text-2);
+  transition: background-color 0.12s;
+  text-transform: capitalize;
+}
+
+.frequency-filter-option:hover {
+  background-color: var(--bg-hover);
+}
+
+.frequency-filter-option.active {
+  font-weight: 700;
+  color: var(--text-1);
+  background-color: var(--bg-subtle);
+}
+
+@media (max-width: 768px) {
+  .bookmarks-main-container {
+    padding: 3rem 2rem;
+  }
+
+  .bookmarks-wrapper {
+    width: 100%;
+  }
+}
+
+@media (max-width: 500px) {
+  .bookmarks-main-container {
+    padding: 2rem 1rem;
+  }
+
+  .bookmark-controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .sort-controls {
+    width: 100%;
+  }
+
+  .sort-controls button {
+    flex: 1;
+  }
+
+  .frequency-filter {
+    width: 100%;
+  }
+
+  .frequency-filter-selected {
+    width: 100%;
+  }
+}
+
 
 /* 🔥 removing animation */
 .bookmark-card.removing {

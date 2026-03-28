@@ -13,8 +13,52 @@
 @import url("./styles/components.css");
 @import url("./styles/searchBar.css");
 @import url("./styles/wordSkeleton.css");
-:root{
-  --grey-outline:rgb(208, 208, 208);
+@import url("./styles/collections.css");
+@import url("./styles/notfound.css");
+@import url("./styles/settings.css");
+@import url("./styles/searchHistory.css");
+:root {
+  --grey-outline: rgb(208, 208, 208);
+
+  --bg:            #f2f2f2;
+  --bg-secondary:  rgb(247, 247, 247);
+  --bg-card:       #ffffff;
+  --bg-subtle:     #f4f4f4;
+  --bg-hover:      rgb(249, 249, 249);
+  --bg-input:      #ffffff;
+
+  --text-1:        #111111;
+  --text-2:        #444444;
+  --text-3:        #888888;
+  --text-muted:    #bbbbbb;
+
+  --border:        rgb(225, 225, 225);
+  --border-subtle: rgb(235, 235, 235);
+  --border-faint:  rgb(246, 246, 246);
+
+  --sk-base:       rgb(235, 235, 235);
+  --sk-shine:      rgb(245, 245, 245);
+}
+
+[data-theme="dark"] {
+  --bg:            #111111;
+  --bg-secondary:  #161616;
+  --bg-card:       #1e1e1e;
+  --bg-subtle:     #252525;
+  --bg-hover:      #2a2a2a;
+  --bg-input:      #1e1e1e;
+
+  --text-1:        #f0f0f0;
+  --text-2:        #c0c0c0;
+  --text-3:        #777777;
+  --text-muted:    #555555;
+
+  --border:        #2d2d2d;
+  --border-subtle: #252525;
+  --border-faint:  #1e1e1e;
+
+  --sk-base:       #252525;
+  --sk-shine:      #2e2e2e;
 }
 
 

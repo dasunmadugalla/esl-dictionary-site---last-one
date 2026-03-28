@@ -8,6 +8,7 @@ import bookmarkRouter from "./routes/bookmarkRoutes.js"
 import search from "./routes/searchWord.js"
 import searchRoutes from "./routes/searchRoutes.js";
 import random from "./routes/random.js"
+import accountRoutes from "./routes/accountRoutes.js"
 
 dotenv.config();
 
@@ -23,11 +24,12 @@ const client = new OpenAI({
 });
 
 
-app.use("/word",search)
+app.use("/word", search)
 app.use("/bookmark", bookmarkRouter)
 app.use("/api", apiRoutes);
 app.use("/search", searchRoutes);
-app.use("/random-word",random)
+app.use("/random-word", random)
+app.use("/account", accountRoutes)
 
 
 // test endpoint

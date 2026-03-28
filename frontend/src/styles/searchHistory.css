@@ -1,0 +1,140 @@
+.sh-container {
+  width: 100%;
+  min-height: 100vh;
+  padding: 3rem 4rem;
+  background: var(--bg-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ── Header ───────────────────────────────────────────────── */
+.sh-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.sh-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-1);
+}
+
+.sh-subtitle {
+  font-size: 13px;
+  color: var(--text-3);
+  font-weight: 500;
+}
+
+/* ── Empty state ──────────────────────────────────────────── */
+.sh-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 5rem 2rem;
+  color: var(--text-3);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.sh-empty-icon {
+  font-size: 2.5rem;
+  color: var(--text-muted);
+}
+
+/* ── Groups ───────────────────────────────────────────────── */
+.sh-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.sh-group {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow:
+    0 2px 0 rgba(0, 0, 0, 0.04),
+    0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+/* ── Group label ──────────────────────────────────────────── */
+.sh-group-label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-3);
+  padding: 0.75rem 1.5rem;
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-subtle);
+}
+
+/* ── Items ────────────────────────────────────────────────── */
+.sh-group-items {
+  display: flex;
+  flex-direction: column;
+}
+
+.sh-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem 1.5rem;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border-faint);
+  transition: background-color 0.12s ease;
+}
+
+.sh-item:last-child {
+  border-bottom: none;
+}
+
+.sh-item:hover {
+  background-color: var(--bg-hover);
+}
+
+.sh-word {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-1);
+  text-transform: capitalize;
+}
+
+.sh-item-right {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.sh-time {
+  font-size: 12px;
+  color: var(--text-3);
+  font-weight: 500;
+}
+
+.sh-link-icon {
+  font-size: 14px;
+  color: var(--text-muted);
+  transition: color 0.12s ease;
+}
+
+.sh-item:hover .sh-link-icon {
+  color: var(--text-3);
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .sh-container {
+    padding: 2.5rem 2rem;
+  }
+}
+
+@media (max-width: 700px) {
+  .sh-container {
+    padding: 2rem 1.25rem;
+  }
+}

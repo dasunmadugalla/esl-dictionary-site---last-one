@@ -5,8 +5,8 @@ function Lexicaldata({data}) {
     <>
       <span className="phonetic">{data.phonetic}</span>
       <span className="syllables">{data.syllables}</span>
-      <span className="frequency lexi-btn">{data.frequency}</span>
-      <span className="complexity lexi-btn">{data.complexity}</span>
+      <span className="frequency lexical-badge">{data.frequency}</span>
+      <span className="complexity lexical-badge">{data.complexity}</span>
     </>
   );
 }

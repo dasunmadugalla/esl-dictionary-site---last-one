@@ -1,0 +1,650 @@
+.collections-main-container {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  width: 100%;
+  min-height: 100vh;
+  padding: 5rem 10rem;
+}
+
+.collections-wrapper {
+  width: 50%;
+  min-width: 20rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* ── Header ───────────────────────────────────────────────── */
+.collections-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.collections-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.collections-title {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.collections-count {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  height: 1.5rem;
+  padding: 0 0.5rem;
+  border-radius: 999px;
+  background-color: var(--text-1);
+  color: var(--bg);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* ── Create button ────────────────────────────────────────── */
+.create-collection-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 5px 12px;
+  border-radius: 7.5px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.create-collection-btn:hover {
+  background: var(--bg-hover);
+}
+
+.create-collection-icon {
+  font-size: 15px;
+}
+
+/* ── Description textarea ────────────────────────────────── */
+.collection-desc-input {
+  border: 1px solid var(--border);
+  border-radius: 7.5px;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  outline: none;
+  resize: none;
+  font-family: inherit;
+  color: var(--text-1);
+  background: var(--bg-input);
+  transition: border-color 0.15s ease;
+}
+
+.collection-desc-input:focus {
+  border-color: var(--text-1);
+}
+
+/* ── New collection form ──────────────────────────────────── */
+.new-collection-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 1rem;
+  border-radius: 7.5px;
+  border: 1px solid var(--border);
+  background: var(--bg-subtle);
+}
+
+.collection-name-input {
+  border: 1px solid var(--border);
+  border-radius: 7.5px;
+  padding: 8px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  outline: none;
+  color: var(--text-1);
+  background: var(--bg-input);
+  transition: border-color 0.15s ease;
+}
+
+.collection-name-input:focus {
+  border-color: var(--text-1);
+}
+
+.new-collection-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.collection-save-btn {
+  padding: 6px 16px;
+  border-radius: 7.5px;
+  border: none;
+  background: var(--text-1);
+  color: var(--bg);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.collection-save-btn:hover {
+  opacity: 0.85;
+}
+
+.collection-cancel-btn {
+  padding: 6px 16px;
+  border-radius: 7.5px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.collection-cancel-btn:hover {
+  background: var(--bg-hover);
+}
+
+.collection-error {
+  font-size: 12px;
+  color: rgb(200, 30, 30);
+  font-weight: 500;
+}
+
+/* ── Collection list / cards ──────────────────────────────── */
+.collections-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.collection-card {
+  cursor: pointer;
+  background-color: var(--bg-subtle);
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 7.5px;
+  box-shadow:
+    0 2px 0 rgba(0, 0, 0, 0.05),
+    0 6px 12px rgba(0, 0, 0, 0.08);
+  transition: background-color 0.15s ease;
+}
+
+.collection-card:hover {
+  background-color: var(--bg-hover);
+}
+
+.collection-card.removing {
+  opacity: 0;
+  transform: translateX(40px);
+  transition: all 0.3s ease;
+}
+
+/* ── Folder icon with badge ───────────────────────────────── */
+.collection-folder-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.collection-card-folder-icon {
+  font-size: 22px;
+  color: var(--text-3);
+  display: block;
+}
+
+.collection-folder-badge {
+  position: absolute;
+  top: -5px;
+  right: -6px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 3px;
+  border-radius: 999px;
+  background: #111;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Card description ─────────────────────────────────────── */
+.collection-card-desc {
+  font-size: 12px;
+  color: #aaa;
+  font-weight: 400;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 28ch;
+}
+
+/* ── Collection page description ─────────────────────────── */
+.collection-page-desc {
+  font-size: 13px;
+  color: #999;
+  font-weight: 500;
+  margin-top: -0.5rem;
+}
+
+.collection-card-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.collection-card-name {
+  font-size: 15px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.collection-card-count {
+  font-size: 12px;
+  color: #999;
+  font-weight: 500;
+}
+
+.collection-card-arrow {
+  font-size: 18px;
+  color: #bbb;
+  flex-shrink: 0;
+}
+
+/* ── Empty state ──────────────────────────────────────────── */
+.collections-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 3rem 0;
+  color: #bbb;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.collections-empty-icon {
+  font-size: 40px;
+  color: #ddd;
+}
+
+.collections-limit-msg {
+  font-size: 12px;
+  color: #aaa;
+  font-weight: 500;
+  text-align: center;
+  padding-top: 0.5rem;
+}
+
+/* ── Collection page header ───────────────────────────────── */
+.collection-page-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.collection-page-title-group {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.collection-back-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 7.5px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  flex-shrink: 0;
+}
+
+.collection-back-btn:hover {
+  background: var(--bg-hover);
+}
+
+.collection-edit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 7.5px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  font-size: 16px;
+  color: #555;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  flex-shrink: 0;
+}
+
+.collection-edit-btn:hover {
+  background: var(--bg-hover);
+}
+
+/* ── Modal ────────────────────────────────────────────────── */
+.collection-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(3px);
+  z-index: 500;
+}
+
+.collection-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 501;
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 2rem;
+  width: 90%;
+  max-width: 420px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.18);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  animation: modal-slide-up 0.2s ease;
+}
+
+@keyframes modal-slide-up {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -46%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.collection-modal-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-1);
+}
+
+.collection-modal-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.collection-modal-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.collection-delete-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 7.5px;
+  border: 1px solid #fca5a5;
+  background: var(--bg-card);
+  font-size: 16px;
+  color: rgb(200, 30, 30);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  flex-shrink: 0;
+}
+
+.collection-delete-btn:hover {
+  background: rgba(200, 30, 30, 0.08);
+}
+
+/* ── Word card in collection ──────────────────────────────── */
+.collection-word-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.collection-word-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+/* ── Collection picker dropdown (on word page) ────────────── */
+.collection-picker {
+  position: relative;
+}
+
+.collection-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  min-width: 170px;
+  z-index: 300;
+  overflow: hidden;
+}
+
+.collection-dropdown-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 9px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-2);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border-faint);
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.1s ease;
+  text-transform: capitalize;
+}
+
+.collection-dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.collection-dropdown-item:hover {
+  background-color: var(--bg-hover);
+}
+
+.collection-check-icon {
+  font-size: 15px;
+  color: var(--text-1);
+  flex-shrink: 0;
+}
+
+.collection-dropdown-msg {
+  padding: 10px 14px;
+  font-size: 13px;
+  color: #aaa;
+  font-weight: 500;
+}
+
+.collection-dropdown-msg a {
+  color: var(--text-1);
+  font-weight: 600;
+}
+
+/* ── Delete confirmation ──────────────────────────────────── */
+.collection-delete-warning {
+  font-size: 14px;
+  color: var(--text-2);
+  line-height: 1.6;
+  padding: 0 0.25rem;
+}
+
+.collection-delete-confirm-btn {
+  height: 38px;
+  padding: 0 1.25rem;
+  background: #c00;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background-color 0.15s ease;
+}
+
+.collection-delete-confirm-btn:hover {
+  background: #e00;
+}
+
+/* ── Per-card delete button ───────────────────────────────── */
+.collection-card-delete-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: #bbb;
+  font-size: 17px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.collection-card-delete-btn:hover {
+  background: rgba(200, 0, 0, 0.08);
+  color: #c00;
+}
+
+.collection-dropdown-loading {
+  padding: 10px 14px;
+  font-size: 13px;
+  color: #bbb;
+}
+
+.collection-dropdown-new {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 9px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-1);
+  background: transparent;
+  border: none;
+  border-top: 1px solid var(--border-subtle);
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.1s ease;
+}
+
+.collection-dropdown-new:hover {
+  background-color: var(--bg-hover);
+}
+
+.collection-create-form {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.collection-create-input {
+  flex: 1;
+  height: 30px;
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  padding: 0 8px;
+  font-size: 12px;
+  font-family: inherit;
+  outline: none;
+  min-width: 0;
+  background: var(--bg-input);
+  color: var(--text-1);
+}
+
+.collection-create-input:focus {
+  border-color: var(--text-1);
+}
+
+.collection-create-confirm {
+  height: 30px;
+  padding: 0 10px;
+  background: #111;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: inherit;
+}
+
+.collection-create-confirm:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.collection-create-cancel {
+  height: 30px;
+  padding: 0 8px;
+  background: transparent;
+  color: #999;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.collection-create-cancel:hover {
+  color: var(--text-1);
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .collections-main-container {
+    padding: 3rem 2rem;
+  }
+
+  .collections-wrapper {
+    width: 100%;
+  }
+}
+
+@media (max-width: 500px) {
+  .collections-main-container {
+    padding: 2rem 1rem;
+  }
+}

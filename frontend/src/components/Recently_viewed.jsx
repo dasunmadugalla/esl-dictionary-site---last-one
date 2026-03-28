@@ -1,59 +1,44 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../context/AuthContext.jsx";
 import { useNavigate } from "react-router-dom";
 
 function Recently_viewed() {
   const { user } = useAuth();
-  const [data, setData] = useState([]);
-
   const navigate = useNavigate();
 
-  const handleClick = (word) => {
-    navigate(`/word/${word}`);
-  };
+  const { data = [] } = useQuery({
+    queryKey: ["recently-viewed", user?.email],
+    queryFn: async () => {
+      const { data: fetched } = await supabase
+        .from("searches")
+        .select("word")
+        .eq("email", user.email)
+        .order("created_at", { ascending: false })
+        .limit(20);
 
-useEffect(() => {
-  if (!user) return;
-
-  const fetch_recentWords = async () => {
-    const { data: fetchedData, error } = await supabase
-      .from("searches")
-      .select("word, created_at")
-      .eq("email", user.email)
-      .order("created_at", { ascending: false }) // 🔥 newest first
-      .limit(20); // get more to handle duplicates
-
-    if (error) {
-      console.log(error);
-    } else {
-      console.log(fetchedData);
-
-      // remove duplicates while keeping order
       const seen = new Set();
-      const uniqueWords = [];
-
-      for (let item of fetchedData) {
+      const unique = [];
+      for (const item of fetched || []) {
         if (!seen.has(item.word)) {
           seen.add(item.word);
-          uniqueWords.push(item.word);
+          unique.push(item.word);
         }
-        if (uniqueWords.length === 5) break;
+        if (unique.length === 5) break;
       }
-
-      setData(uniqueWords);
-    }
-  };
-
-  fetch_recentWords();
-}, [user]);
+      return unique;
+    },
+    enabled: !!user,
+    staleTime: 2 * 60 * 1000,
+  });
 
   return (
-    <div className="recentViewed-wrapper">
-      <h2 className="recentViewed-title">recent searches</h2>
+    <div className="recent-searches-sidebar">
+      <h2 className="recent-searches-title">recent searches</h2>
       <ol>
         {data.map((word, index) => (
-          <li key={index} onClick={() => handleClick(word)}>
+          <li key={index} onClick={() => navigate(`/word/${word}`)}>
             {word}
           </li>
         ))}

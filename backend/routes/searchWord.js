@@ -1,5 +1,5 @@
 import express from "express";
-import { verifyUser } from "../middleware/authMiddleware.js";
+import { optionalAuth } from "../middleware/authMiddleware.js";
 import OpenAI from "openai";
 import { supabase } from "../supabase.js";
 
@@ -8,7 +8,7 @@ const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-router.get("/:search", verifyUser, async (req, res) => {
+router.get("/:search", optionalAuth, async (req, res) => {
   const raw = req.params.search;
   const wordParam = typeof raw === "string" ? raw.trim() : raw;
 
@@ -46,29 +46,23 @@ router.get("/:search", verifyUser, async (req, res) => {
     }
 
     if (existing) {
-      // ✅ Check if the user has this word bookmarked
-      // fetch only by email
-      // 1️⃣ Fetch all bookmark rows for this user
-      const { data: bookmarkRows } = await supabase
-        .from("Bookmarks")
-        .select("wordIDs")
-        .eq("email", req.user.email);
+      // ✅ Check if the user has this word bookmarked (guests always get false)
+      let isBookmarked = false;
+      if (req.user) {
+        const { data: bookmarkRows } = await supabase
+          .from("Bookmarks")
+          .select("wordIDs")
+          .eq("email", req.user.email);
 
-      console.log("All bookmark rows:", bookmarkRows);
+        const wordIDsArray =
+          bookmarkRows
+            ?.map((row) =>
+              row.wordIDs.split(",").map((w) => w.trim().toLowerCase()),
+            )
+            .flat() || [];
 
-      // 2️⃣ Combine all wordIDs into a single array
-      const wordIDsArray =
-        bookmarkRows
-          ?.map((row) =>
-            row.wordIDs.split(",").map((w) => w.trim().toLowerCase()),
-          )
-          .flat() || [];
-
-      console.log("Combined wordIDsArray:", wordIDsArray);
-
-      // 3️⃣ Check if the normalized word is included
-      const isBookmarked = wordIDsArray.includes(normalized.toLowerCase());
-      console.log("isBookmarked result:", isBookmarked);
+        isBookmarked = wordIDsArray.includes(normalized.toLowerCase());
+      }
 
       const resultFromDb = {
         word: existing.word ?? "",
@@ -84,6 +78,10 @@ router.get("/:search", verifyUser, async (req, res) => {
               definition: existing.technical_definition.definition || "",
             }
           : { subject: "", definition: "" },
+        word_family: existing.word_family ?? null,
+        register: existing.register ?? "",
+        memory_tip: existing.memory_tip ?? "",
+        real_world_context: existing.real_world_context ?? "",
         related_words: existing.related_words ?? [],
         bookmarked: isBookmarked,
       };
@@ -147,6 +145,10 @@ C2 → highly rare or specialized words
 Choose the most appropriate level and be consistent.
 
 9. synonyms and antonyms should be strictly text book synonyms and antonyms which are 100% correct.if there is no textbook synonyms, antonyms or any related words to that perticular word leave those feilds empty
+10. For word_family, provide the other grammatical forms of the word (noun, verb, adjective, adverb). Only include forms that genuinely exist. Use "" for any form that does not exist. Example: for "beautiful" → noun: "beauty", verb: "beautify", adjective: "beautiful", adverb: "beautifully". For a word like "the" that has no other forms, all fields should be "".
+11. register must be exactly one of: formal, informal, slang, academic, neutral, literary — pick the single most accurate one for how this word is typically used.
+12. memory_tip: a single vivid one-liner that helps an ESL learner remember the word. Use a comparison, analogy, or image. Maximum 20 words. Example: "Think of 'ephemeral' like a soap bubble — beautiful but gone in seconds."
+13. real_world_context: one specific sentence describing where or when someone would actually encounter or use this word. Be concrete and relatable. Example: "You'd hear this word in news articles about politics or in formal business meetings."
 
 Return JSON in this exact format (DO NOT change the structure):
 
@@ -156,10 +158,19 @@ Return JSON in this exact format (DO NOT change the structure):
   "syllables": "Dic-tion-ar-y",
   "frequency": "common",
   "complexity": "B2",
+  "register": "neutral",
+  "memory_tip": "Think of a dictionary as a word map — it tells you where every word lives and what it means.",
+  "real_world_context": "You'd use a dictionary when you read a word you don't know in a book or article.",
 "technical_definition": {
   "subject": "",
   "definition": ""
 },
+  "word_family": {
+    "noun": "dictionary",
+    "verb": "",
+    "adjective": "",
+    "adverb": ""
+  },
   "related_words": ["word1","word2"],
   "meanings": [
     {
@@ -213,7 +224,16 @@ Return JSON in this exact format (DO NOT change the structure):
         technical_definition: {
           subject: parsed.technical_definition?.subject || "",
           definition: parsed.technical_definition?.definition || "",
-        },  
+        },
+        word_family: {
+          noun: parsed.word_family?.noun || "",
+          verb: parsed.word_family?.verb || "",
+          adjective: parsed.word_family?.adjective || "",
+          adverb: parsed.word_family?.adverb || "",
+        },
+        register: parsed.register ?? "",
+        memory_tip: parsed.memory_tip ?? "",
+        real_world_context: parsed.real_world_context ?? "",
         definitions: parsed.meanings ?? [],
         related_words: parsed?.related_words || [],
       };

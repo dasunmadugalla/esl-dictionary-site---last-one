@@ -1,17 +1,19 @@
 // Searchbar.jsx
-import React, { useContext, useState, useEffect, useRef } from "react";
+import React, { useContext, useState, useRef } from "react";
 import { FiSearch } from "react-icons/fi";
+import { TbDice5 } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { IPContext } from "../context/IPContext";
-function Searchbar() {
+function Searchbar({ externalInputRef } = {}) {
   const [search_value, setSearch_value] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [activeIndex, setActiveIndex] = useState(-1);
   const navigate = useNavigate();
   const { user } = useAuth();
   const { ip } = useContext(IPContext);
-  const inputRef = useRef(null);
+  const ownInputRef = useRef(null);
+  const inputRef = externalInputRef || ownInputRef;
 
   // Normalize input
   const normalizeWord = (word) =>
@@ -110,9 +112,20 @@ function Searchbar() {
     }
   };
 
+  const handleRandom = async () => {
+    try {
+      const res = await fetch(`${ip}:3000/random-word`);
+      const { word } = await res.json();
+      navigate(`/word/${word}`);
+    } catch (err) {
+      console.error("Failed to fetch random word:", err);
+    }
+  };
+
   return (
-    <div className="search-main-wrapper">
-      <div className="input-box">
+    <div className="searchbar-outer">
+    <div className="searchbar-wrapper">
+      <div className="searchbar-input-box">
         <input
           ref={inputRef}
           type="text"
@@ -125,8 +138,8 @@ function Searchbar() {
           }}
           onKeyDown={handleKeyDown}
         />
-        <button className="inputBtn" onClick={() => handleSearch()}>
-          <FiSearch className="inputBtn-icon" />
+        <button className="search-submit-btn" onClick={() => handleSearch()}>
+          <FiSearch className="search-submit-icon" />
         </button>
       </div>
 
@@ -135,9 +148,7 @@ function Searchbar() {
           {suggestions.map((sug, index) => (
             <li
               key={sug.word}
-              className={`suggestion ${
-                index === activeIndex ? "active" : ""
-              }`}
+              className={`suggestion ${index === activeIndex ? "active" : ""}`}
               onClick={() => {
                 setSearch_value(sug.word);
                 handleSearch(sug.word);
@@ -149,6 +160,11 @@ function Searchbar() {
           ))}
         </ul>
       )}
+    </div>
+
+    <button className="random-icon-btn" onClick={handleRandom} title="Random word">
+      <TbDice5 />
+    </button>
     </div>
   );
 }

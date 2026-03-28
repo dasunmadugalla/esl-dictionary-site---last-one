@@ -6,6 +6,12 @@
   justify-self: center;
   height: 100%;
   grid-column: 2;
+  opacity: 0;
+  animation: loader-appear 0.15s ease 0.25s forwards;
+}
+
+@keyframes loader-appear {
+  to { opacity: 1; }
 }
 
 .loader {

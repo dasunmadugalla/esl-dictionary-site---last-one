@@ -1,0 +1,276 @@
+.settings-main {
+  width: 100%;
+  min-height: 100vh;
+  background: var(--bg-secondary);
+  display: flex;
+  justify-content: center;
+  padding: 4rem 1.5rem;
+}
+
+.settings-wrapper {
+  width: 100%;
+  max-width: 640px;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* ── Hero ─────────────────────────────────────────────────── */
+.settings-hero {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.settings-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-1);
+}
+
+.settings-subtitle {
+  font-size: 13px;
+  color: var(--text-3);
+  font-weight: 500;
+}
+
+/* ── Section ──────────────────────────────────────────────── */
+.settings-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 0 rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.settings-section-title {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-3);
+  padding: 0.85rem 1.25rem;
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-subtle);
+}
+
+.settings-section-body {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Row ──────────────────────────────────────────────────── */
+.settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  flex-wrap: wrap;
+}
+
+.settings-row-label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.settings-row-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-1);
+}
+
+.settings-row-hint {
+  font-size: 12px;
+  color: var(--text-3);
+  font-weight: 400;
+}
+
+.settings-row-control {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.settings-divider {
+  height: 1px;
+  background: var(--border-subtle);
+  margin: 0 1.25rem;
+}
+
+/* ── Buttons ──────────────────────────────────────────────── */
+.settings-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  height: 34px;
+  padding: 0 1rem;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-1);
+  transition: background-color 0.15s ease;
+}
+
+.settings-btn:hover:not(:disabled) {
+  background: var(--bg-hover);
+}
+
+.settings-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.settings-btn--primary {
+  background: var(--text-1);
+  color: var(--bg);
+  border-color: var(--text-1);
+}
+
+.settings-btn--primary:hover:not(:disabled) {
+  opacity: 0.85;
+  background: var(--text-1);
+}
+
+.settings-btn--danger {
+  background: transparent;
+  color: #c00;
+  border-color: #fca5a5;
+}
+
+.settings-btn--danger:hover:not(:disabled) {
+  background: rgba(200, 0, 0, 0.06);
+}
+
+/* ── Password form ────────────────────────────────────────── */
+.settings-pw-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 0 1.25rem 1rem;
+}
+
+/* ── Inputs ───────────────────────────────────────────────── */
+.settings-input {
+  height: 36px;
+  padding: 0 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  background: var(--bg-input);
+  color: var(--text-1);
+  outline: none;
+  transition: border-color 0.15s ease;
+  width: 100%;
+}
+
+.settings-input:focus {
+  border-color: var(--text-1);
+}
+
+.settings-input--small {
+  width: 64px;
+  text-align: center;
+}
+
+/* ── Theme toggle ─────────────────────────────────────────── */
+.settings-theme-toggle {
+  display: flex;
+  gap: 0;
+  background: var(--bg-subtle);
+  border-radius: 8px;
+  padding: 3px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.settings-theme-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 5px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-3);
+  transition: background-color 0.15s ease, color 0.15s ease;
+  white-space: nowrap;
+}
+
+.settings-theme-option.active {
+  background: var(--bg-card);
+  color: var(--text-1);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* ── Messages ─────────────────────────────────────────────── */
+.settings-msg {
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.settings-msg--success { color: #00a368; }
+.settings-msg--error   { color: #c00; }
+
+/* ── Delete confirm ───────────────────────────────────────── */
+.settings-delete-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  width: 100%;
+}
+
+.settings-delete-warning {
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.5;
+}
+
+.settings-delete-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* ── Loading ──────────────────────────────────────────────── */
+.settings-loading {
+  padding: 1.25rem;
+  font-size: 13px;
+  color: var(--text-3);
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .settings-main {
+    padding: 2.5rem 1rem;
+  }
+
+  .settings-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .settings-theme-toggle {
+    width: 100%;
+  }
+
+  .settings-theme-option {
+    flex: 1;
+    justify-content: center;
+  }
+}

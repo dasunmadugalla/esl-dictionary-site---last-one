@@ -1,110 +1,144 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { FiHome } from "react-icons/fi";
 import {
   TbSparkles,
-  TbCube,
+  TbTrendingUp,
   TbWorld,
   TbUserCircle,
   TbSettings,
   TbBookmark,
-  TbStar,
+  TbLayoutDashboard,
+  TbFolders,
+  TbHistory,
+  TbX,
+  TbSun,
+  TbMoon,
 } from "react-icons/tb";
 import { useAuth } from "../context/AuthContext.jsx";
+import { useTheme } from "../context/ThemeContext.jsx";
 import { supabase } from "../lib/supabase";
-import { useNavigate } from "react-router-dom";
-import logo from "../assets/logo.svg"
+import logo from "../assets/logo.svg";
 
-function Navbar() {
+function Navbar({ menuOpen, onClose }) {
   const { user, loading } = useAuth();
+  const { theme, toggle } = useTheme();
   const navigate = useNavigate();
-  const [logoutVisible, setLogoutVisibility] = useState(false);
+  const [logoutVisible, setLogoutVisible] = useState(false);
 
-  const handleLogoutVisibility = () => {
-    logoutVisible? setLogoutVisibility(false) :setLogoutVisibility(true)
-  }
+  const navClass = ({ isActive }) => (isActive ? "active" : "");
 
-const handleLogout = async () => {
-  const { error } = await supabase.auth.signOut();
+  const handleNavClick = () => {
+    if (onClose) onClose();
+  };
 
-  if (error) {
-    console.error("Logout error:", error.message);
-  }else{
-    navigate("/auth")
-  }
-};
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error("Logout error:", error.message);
+    } else {
+      handleNavClick();
+      navigate("/auth");
+    }
+  };
+
   return (
-    <div className="navBar">
+    <div className={`navbar${menuOpen ? " mobile-open" : ""}`}>
+      {/* Mobile close button */}
+      <button className="nav-close-btn" onClick={onClose}>
+        <TbX />
+      </button>
+
       {/* <img src={logo} alt="Dictionary" className="site-logo" /> */}
+
       <ul>
         <li>
-          <Link to="/">
+          <NavLink to="/" end className={navClass} onClick={handleNavClick}>
             <FiHome className="nav-icon" />
             <span className="nav-txt">Home</span>
-          </Link>
+          </NavLink>
         </li>
-
         <li>
-          <Link to="/policy">
-            <TbSparkles className="nav-icon" />
-            <span className="nav-txt">Private Policy</span>
-          </Link>
+          <NavLink to="/dashboard" className={navClass} onClick={handleNavClick}>
+            <TbLayoutDashboard className="nav-icon" />
+            <span className="nav-txt">Dashboard</span>
+          </NavLink>
         </li>
-
         <li>
-          <Link to="/trending">
-            <TbCube className="nav-icon" />
+          <NavLink to="/trending" className={navClass} onClick={handleNavClick}>
+            <TbTrendingUp className="nav-icon" />
             <span className="nav-txt">Trending</span>
-          </Link>
+          </NavLink>
         </li>
-
         <li>
-          <Link to="/word-of-the-day">
+          <NavLink to="/word-of-the-day" className={navClass} onClick={handleNavClick}>
             <TbWorld className="nav-icon" />
-            <span className="nav-txt">Word of the day</span>
-          </Link>
+            <span className="nav-txt">Word of the Day</span>
+          </NavLink>
+        </li>
+        <li>
+          <NavLink to="/policy" className={navClass} onClick={handleNavClick}>
+            <TbSparkles className="nav-icon" />
+            <span className="nav-txt">Privacy Policy</span>
+          </NavLink>
         </li>
       </ul>
-        <hr />
+
+      <hr />
+
       <ul>
         <li>
-          <Link to="/bookmarks">
+          <NavLink to="/bookmarks" className={navClass} onClick={handleNavClick}>
             <TbBookmark className="nav-icon" />
-            <span className="nav-txt">Bookmark</span>
-          </Link>
+            <span className="nav-txt">Bookmarks</span>
+          </NavLink>
         </li>
         <li>
-          <Link to="/">
-            <TbStar className="nav-icon" />
-            <span className="nav-txt">Bookmark</span>
-          </Link>
+          <NavLink to="/collections" className={navClass} onClick={handleNavClick}>
+            <TbFolders className="nav-icon" />
+            <span className="nav-txt">Collections</span>
+          </NavLink>
+        </li>
+        <li>
+          <NavLink to="/history" className={navClass} onClick={handleNavClick}>
+            <TbHistory className="nav-icon" />
+            <span className="nav-txt">History</span>
+          </NavLink>
         </li>
       </ul>
 
-        <hr />
+      <hr />
 
-
-      <ul className="list-bottom">
+      <ul>
         <li>
-          <Link to="/">
+          <button className="nav-theme-btn" onClick={toggle}>
+            {theme === "dark" ? <TbSun className="nav-icon" /> : <TbMoon className="nav-icon" />}
+            <span className="nav-txt">{theme === "dark" ? "Light mode" : "Dark mode"}</span>
+          </button>
+        </li>
+      </ul>
+
+      <ul className="nav-list-bottom">
+        <li>
+          <NavLink to="/settings" className={navClass} onClick={handleNavClick}>
             <TbSettings className="nav-icon" />
             <span className="nav-txt">Settings</span>
-          </Link>
+          </NavLink>
         </li>
-        <li className="account-nav-wrap" onClick={handleLogoutVisibility}>
-
-          <div className="email-box">
-                        <TbUserCircle className="nav-icon" />
-            <span className="nav-txt">
+        <li className="account-nav-wrap" onClick={() => setLogoutVisible((v) => !v)}>
+          <div className="nav-account-row">
+            <TbUserCircle className="nav-icon" />
+            <span className="nav-txt nav-email">
               {loading ? "Loading…" : user ? user.email : "Guest"}
             </span>
           </div>
-                    <span className="logout-wrapper">
-                             {logoutVisible && <button onClick={handleLogout} className="logout-btn">logout</button>
-}
-
-          </span>
-
+          {logoutVisible && (
+            <div className="logout-wrapper">
+              <button onClick={handleLogout} className="logout-btn">
+                Log out
+              </button>
+            </div>
+          )}
         </li>
       </ul>
     </div>

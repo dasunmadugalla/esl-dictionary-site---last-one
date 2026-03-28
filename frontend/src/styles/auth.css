@@ -3,30 +3,61 @@
     --blue:#0659D7;
 }
 
-.auth-main{
-    /* background-color:rgb(0, 115, 255); */
-    /* background-color: lightblue; */
-    width: 50vw;
-    height: 100%;
-    padding: 4rem 100px;
+/* ── Tab toggle ── */
+.auth-tabs {
+    display: flex;
+    gap: 0;
+    background: var(--bg-subtle);
+    border-radius: 8px;
+    padding: 3px;
+    width: 100%;
+}
+
+.auth-tab {
+    flex: 1;
+    padding: 7px 0;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-3);
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+    font-family: inherit;
+}
+
+.auth-tab--active {
+    background: var(--bg-card);
+    color: var(--text-1);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.auth-main {
+    width: 100vw;
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
+    background-color: var(--bg-secondary);
+    padding: 2rem;
 }
 
-.auth-box{
-    /* background-color: lightcoral; */
+.auth-box {
     display: flex;
-    justify-content: center;
-    align-items: baseline;
-    /* width: 50%; */
-    padding: 0 5rem;
-    height: 100%;
-    gap: 3rem;
     flex-direction: column;
-    background-color: white;
+    gap: 2rem;
+    padding: 2.5rem 2.5rem;
+    width: 100%;
+    max-width: 380px;
+    background-color: var(--bg-card);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    box-shadow:
+        0 2px 0 rgba(0, 0, 0, 0.04),
+        0 8px 24px rgba(0, 0, 0, 0.08);
 }
-.txt-box{
+.auth-heading{
     /* background-color: lightpink; */
     width: 100%;
     display: flex;
@@ -34,12 +65,12 @@
     align-items: center;
     gap: .25rem;
 }
-.txt-box h1{
+.auth-heading h1{
     font-size: 24px;
     text-transform: capitalize;
     font-weight:600;
 }
-.txt-box p{
+.auth-heading p{
     /* color: rgb(155, 155, 155); */
     color: var(--light-grey);
     font-size: 14px;
@@ -61,7 +92,7 @@
 }
 
 .auth-input-container .auth-input-box{
-    background-color: rgb(253, 253, 253);
+    background-color: var(--bg-input);
     height: 35px;
     width: 20rem;
     display: flex;
@@ -71,7 +102,7 @@
     padding: 0 .75rem;
     gap: .5rem;
     border-radius: 5px;
-    border: .25px solid rgb(206, 206, 206);
+    border: .25px solid var(--border);
 }
 
 .auth-input-container .auth-input-box input{
@@ -80,8 +111,7 @@
     border: none;
     flex: 1 ;
     font-weight: 500;
-    color: var(--light-grey);
-    color: rgb(13, 13, 13);
+    color: var(--text-1);
     padding: 0 .5rem;
 }
 .auth-input-icon{
@@ -93,13 +123,13 @@
     color: var(--light-grey);
     stroke-width: 1.75px;
 }
-.pass-visibility-Btn{
+.password-visibility-btn{
     background-color: transparent;
     outline: none;
     border: none;
 }
 
-.signBtn{
+.sign-in-btn{
     width: 100%;
     height: 35px;
     outline: none;
@@ -111,7 +141,7 @@
     font-weight: 500;
     font-size: 12px;
 }
-.acc-txt{
+.account-prompt{
     /* background-color: #0659D7; */
     width: 100%;
     text-align: center;
@@ -120,9 +150,8 @@
     color: var(--light-grey);
     text-transform: capitalize;
 }
-.acc-txt .crAcc-txt{
-    /* color:#0659D7; */
-    color: black;
+.account-prompt .create-account-link{
+    color: var(--text-1);
     font-weight: 700;
     text-transform: capitalize;
     margin-left: 5px;
@@ -130,13 +159,57 @@
 }
 
 .auth-error{
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background-color: red;
-    text-align: center;
-    padding: .5rem;
-    color: white;
+    font-size: 12px;
     font-weight: 500;
-    font-size: 14px;
+    color: rgb(200, 30, 30);
+    text-align: center;
+}
+
+.auth-success {
+    font-size: 12px;
+    font-weight: 500;
+    color: rgb(22, 140, 60);
+    text-align: center;
+}
+
+/* ── OTP boxes ── */
+.otp-input-row {
+    display: flex;
+    gap: .6rem;
+    justify-content: center;
+}
+
+.otp-box {
+    width: 42px;
+    height: 48px;
+    border-radius: 8px;
+    border: 1.5px solid var(--border);
+    background-color: var(--bg-input);
+    color: var(--text-1);
+    font-size: 20px;
+    font-weight: 700;
+    text-align: center;
+    outline: none;
+    transition: border-color 0.15s ease;
+    caret-color: transparent;
+}
+
+.otp-box:focus {
+    border-color: var(--text-1);
+}
+
+/* resend button styled like a link */
+.resend-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-size: inherit;
+    font-weight: 700;
+    font-family: inherit;
+}
+
+.resend-btn:disabled {
+    color: var(--light-grey);
+    cursor: default;
 }

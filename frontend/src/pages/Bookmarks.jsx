@@ -15,7 +15,9 @@ function Bookmarks() {
   const [bookmarkData, setBookmarkdata] = useState([]);
   const [error, setError] = useState(null);
   const [sortBy, setSortBy] = useState("az");
-  const [removingIds, setRemovingIds] = useState([]); // 🔥 animation state
+  const [frequencyFilter, setFrequencyFilter] = useState("all");
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [removingIds, setRemovingIds] = useState([]);
 
   useEffect(() => {
     setLoading(true);
@@ -96,19 +98,19 @@ function Bookmarks() {
     }
   }
 
-  // 🔥 SORTING
-  const sortedData = [...bookmarkData].sort((a, b) => {
+  const FREQUENCIES = ["all", "essential", "common", "intermediate", "advanced", "rare"];
+
+  const filteredData = frequencyFilter === "all"
+    ? bookmarkData
+    : bookmarkData.filter((w) => w.frequency?.toLowerCase() === frequencyFilter);
+
+  const sortedData = [...filteredData].sort((a, b) => {
     switch (sortBy) {
-      case "az":
-        return a.word.localeCompare(b.word);
-      case "za":
-        return b.word.localeCompare(a.word);
-      case "recent":
-        return new Date(b.created_at) - new Date(a.created_at);
-      case "oldest":
-        return new Date(a.created_at) - new Date(b.created_at);
-      default:
-        return 0;
+      case "az":  return a.word.localeCompare(b.word);
+      case "za":  return b.word.localeCompare(a.word);
+      case "recent":  return new Date(b.created_at) - new Date(a.created_at);
+      case "oldest":  return new Date(a.created_at) - new Date(b.created_at);
+      default: return 0;
     }
   });
 
@@ -119,34 +121,58 @@ function Bookmarks() {
       ) : (
         <>
           <div className="bookmarks-wrapper">
-            <div className="sort-controls">
-              <button
-                className={sortBy === "az" ? "active" : ""}
-                onClick={() => setSortBy("az")}
-              >
-                A → Z
-              </button>
+            <div className="bookmarks-header">
+              <h2 className="bookmarks-title">Bookmarks</h2>
+              <span className="bookmarks-count">{bookmarkData.length}</span>
+            </div>
 
-              <button
-                className={sortBy === "za" ? "active" : ""}
-                onClick={() => setSortBy("za")}
-              >
-                Z → A
-              </button>
+            <div className="bookmark-controls">
+              <div className="sort-controls">
+                <button
+                  className={sortBy === "az" ? "active" : ""}
+                  onClick={() => setSortBy("az")}
+                >
+                  A → Z
+                </button>
+                <button
+                  className={sortBy === "za" ? "active" : ""}
+                  onClick={() => setSortBy("za")}
+                >
+                  Z → A
+                </button>
+                <button
+                  className={sortBy === "recent" ? "active" : ""}
+                  onClick={() => setSortBy("recent")}
+                >
+                  Recent
+                </button>
+                <button
+                  className={sortBy === "oldest" ? "active" : ""}
+                  onClick={() => setSortBy("oldest")}
+                >
+                  Oldest
+                </button>
+              </div>
 
-              <button
-                className={sortBy === "recent" ? "active" : ""}
-                onClick={() => setSortBy("recent")}
-              >
-                Recent
-              </button>
-
-              <button
-                className={sortBy === "oldest" ? "active" : ""}
-                onClick={() => setSortBy("oldest")}
-              >
-                Oldest
-              </button>
+              <div className="frequency-filter" onBlur={() => setDropdownOpen(false)} tabIndex={0}>
+                <div className="frequency-filter-selected" onClick={() => setDropdownOpen((p) => !p)}>
+                  <span>{frequencyFilter.charAt(0).toUpperCase() + frequencyFilter.slice(1)}</span>
+                  <span className={`frequency-filter-arrow ${dropdownOpen ? "open" : ""}`}>▾</span>
+                </div>
+                {dropdownOpen && (
+                  <ul className="frequency-filter-list">
+                    {FREQUENCIES.map((freq) => (
+                      <li
+                        key={freq}
+                        className={`frequency-filter-option ${frequencyFilter === freq ? "active" : ""}`}
+                        onMouseDown={() => { setFrequencyFilter(freq); setDropdownOpen(false); }}
+                      >
+                        {freq.charAt(0).toUpperCase() + freq.slice(1)}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
             </div>
 
             {sortedData.map((row, index) => (
@@ -160,7 +186,7 @@ function Bookmarks() {
                 }
               >
                 <div className="bookmark-content">
-                  <h1 className="bk-word">{row.word}</h1>
+                  <h1 className="bookmark-word">{row.word}</h1>
 
                   <div className="bookmark-bottom-bar">
                     <Lexicaldata data={row} />
@@ -168,13 +194,13 @@ function Bookmarks() {
                 </div>
 
                 <button
-                  className="bookmark-btn interation-btn"
+                  className="bookmark-btn interaction-btn"
                   onClick={(e) => {
                     e.stopPropagation(); // ❗ prevent navigation
                     toggleBookmark(row.word);
                   }}
                 >
-                  <TbStarFilled className="interaction-icon bk-star" />
+                  <TbStarFilled className="interaction-icon bookmark-star" />
                 </button>
               </div>
             ))}
