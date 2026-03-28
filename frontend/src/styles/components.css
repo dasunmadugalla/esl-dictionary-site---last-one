@@ -48,7 +48,7 @@
 }
 .url-txt{
     font-weight: 500;
-    color: rgb(110, 110, 110);
+    color: var(--text-3);
 }
 .url-copy-btn{
     height: 1.5rem;
@@ -60,7 +60,7 @@
     background-color: transparent;
     border: none;
     outline: none;
-    border-left: 2px solid grey;
+    border-left: 2px solid var(--border);
 }
 .url-copy-icon{
     font-size: 16px;
@@ -113,7 +113,7 @@
 
 .recent-searches-sidebar ol li:hover {
   background-color: var(--bg-hover);
-  border-left-color: #000;
+  border-left-color: var(--text-1);
 }
 
 @media (max-width: 1200px) {

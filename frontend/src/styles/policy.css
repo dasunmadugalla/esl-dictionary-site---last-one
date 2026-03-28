@@ -33,7 +33,7 @@
 
 .policy-hero-sub {
   font-size: 13px;
-  color: #999;
+  color: var(--text-3);
   font-weight: 500;
 }
 
@@ -100,7 +100,7 @@
   padding: 0.6rem 0.9rem;
   border-radius: 0 6px 6px 0;
   font-size: 13.5px !important;
-  color: #555 !important;
+  color: var(--text-2) !important;
   line-height: 1.65 !important;
 }
 

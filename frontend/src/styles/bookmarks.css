@@ -145,12 +145,12 @@
 }
 
 .frequency-filter-selected:hover {
-  border-color: #aaa;
+  border-color: var(--text-3);
 }
 
 .frequency-filter-arrow {
   font-size: 11px;
-  color: #999;
+  color: var(--text-3);
   transition: transform 0.2s;
   display: inline-block;
 }

@@ -1,5 +1,5 @@
 #root{
-    --light-grey: rgb(155, 155, 155);
+    --light-grey: var(--text-3);
     --blue:#0659D7;
 }
 
@@ -134,12 +134,17 @@
     height: 35px;
     outline: none;
     border: none;
-    /* background-color: var(--blue); */
-    background-color: black;
+    background-color: var(--text-1);
     border-radius: 5px;
-    color: white;
+    color: var(--bg);
     font-weight: 500;
     font-size: 12px;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+}
+
+.sign-in-btn:hover {
+    opacity: 0.85;
 }
 .account-prompt{
     /* background-color: #0659D7; */

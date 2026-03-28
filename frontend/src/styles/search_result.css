@@ -33,7 +33,7 @@
   margin-top: 6rem;
   font-size: 1rem;
   font-weight: 500;
-  color: rgb(100, 100, 100);
+  color: var(--text-2);
   text-align: center;
 }
 
@@ -158,7 +158,7 @@ h1.word {
   gap: 0.75rem;
   font-size: 16px;
   font-weight: 500;
-  color: rgb(133, 133, 133);
+  color: var(--text-3);
 }
 
 span.phonetic {
@@ -311,7 +311,7 @@ p.definition {
 .sentence-explanation {
   font-size: 13px;
   font-weight: 400;
-  color: rgb(130, 130, 130);
+  color: var(--text-3);
 }
 
 /* ── Synonyms / Antonyms ────────────────────────────────────── */
@@ -337,7 +337,7 @@ p.definition {
   font-size: 14px;
   font-weight: 600;
   text-transform: capitalize;
-  color: rgb(143, 143, 143);
+  color: var(--text-3);
   white-space: nowrap;
 }
 
@@ -453,7 +453,7 @@ p.definition {
 .collocations-title {
   font-size: 13px;
   font-weight: 700;
-  color: #aaa;
+  color: var(--text-3);
   text-transform: uppercase;
   letter-spacing: 0.4px;
 }
@@ -474,7 +474,7 @@ p.definition {
 .collocations-group-label {
   font-size: 11px;
   font-weight: 700;
-  color: #ccc;
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.3px;
   width: 38px;
@@ -524,7 +524,7 @@ p.definition {
 .word-family-title {
   font-size: 13px;
   font-weight: 700;
-  color: #aaa;
+  color: var(--text-3);
   text-transform: uppercase;
   letter-spacing: 0.4px;
   white-space: nowrap;
@@ -555,7 +555,7 @@ p.definition {
 
 .word-family-item:hover .word-family-pos,
 .word-family-item:hover .word-family-word {
-  color: #fff;
+  color: var(--bg);
 }
 
 .word-family-item--current {
@@ -572,7 +572,7 @@ p.definition {
 .word-family-pos {
   font-size: 11px;
   font-weight: 600;
-  color: #aaa;
+  color: var(--text-3);
   text-transform: uppercase;
   letter-spacing: 0.3px;
 }
@@ -597,7 +597,7 @@ p.definition {
   white-space: nowrap;
   font-size: 14px;
   font-weight: 600;
-  color: rgb(100, 100, 100);
+  color: var(--text-3);
 }
 
 .related-words-wrapper {
@@ -625,8 +625,8 @@ p.definition {
   font-size: 12px;
   font-weight: 600;
   text-decoration: none;
-  background-color: black;
-  color: white;
+  background-color: var(--text-1);
+  color: var(--bg);
   text-transform: capitalize;
   transition: opacity 0.2s;
 }
@@ -757,4 +757,35 @@ p.definition {
 [data-theme="dark"] .tiny-spinner {
   border-color: rgba(255, 255, 255, 0.15);
   border-top-color: rgba(255, 255, 255, 0.8);
+}
+
+[data-theme="dark"] span.syllables { color: #7aadff; }
+[data-theme="dark"] span.phonetic  { color: #f472b6; }
+
+[data-theme="dark"] span.word-class {
+  color: #f472b6;
+  background: rgba(244, 114, 182, 0.1);
+  border-color: rgba(244, 114, 182, 0.2);
+}
+
+[data-theme="dark"] .word-family-item--current {
+  background: #2255cc;
+  border-color: #2255cc;
+}
+
+[data-theme="dark"] .register-badge--formal,
+[data-theme="dark"] .register-badge--academic,
+[data-theme="dark"] .register-badge--informal,
+[data-theme="dark"] .register-badge--slang,
+[data-theme="dark"] .register-badge--literary,
+[data-theme="dark"] .register-badge--neutral {
+  background: rgba(0, 180, 120, 0.12);
+  color: #34d399;
+  border-color: rgba(52, 211, 153, 0.25);
+}
+
+[data-theme="dark"] .lexical-badge {
+  color: #7aadff;
+  background: rgba(100, 160, 255, 0.08);
+  border-color: rgba(100, 160, 255, 0.15);
 }

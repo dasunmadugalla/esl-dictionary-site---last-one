@@ -210,8 +210,8 @@
   height: 16px;
   padding: 0 3px;
   border-radius: 999px;
-  background: #111;
-  color: #fff;
+  background: var(--text-1);
+  color: var(--bg);
   font-size: 9px;
   font-weight: 700;
   display: flex;
@@ -222,7 +222,7 @@
 /* ── Card description ─────────────────────────────────────── */
 .collection-card-desc {
   font-size: 12px;
-  color: #aaa;
+  color: var(--text-3);
   font-weight: 400;
   white-space: nowrap;
   overflow: hidden;
@@ -233,7 +233,7 @@
 /* ── Collection page description ─────────────────────────── */
 .collection-page-desc {
   font-size: 13px;
-  color: #999;
+  color: var(--text-3);
   font-weight: 500;
   margin-top: -0.5rem;
 }
@@ -253,13 +253,13 @@
 
 .collection-card-count {
   font-size: 12px;
-  color: #999;
+  color: var(--text-3);
   font-weight: 500;
 }
 
 .collection-card-arrow {
   font-size: 18px;
-  color: #bbb;
+  color: var(--text-muted);
   flex-shrink: 0;
 }
 
@@ -270,7 +270,7 @@
   align-items: center;
   gap: 0.75rem;
   padding: 3rem 0;
-  color: #bbb;
+  color: var(--text-3);
   font-size: 14px;
   font-weight: 500;
   text-align: center;
@@ -278,12 +278,12 @@
 
 .collections-empty-icon {
   font-size: 40px;
-  color: #ddd;
+  color: var(--text-muted);
 }
 
 .collections-limit-msg {
   font-size: 12px;
-  color: #aaa;
+  color: var(--text-3);
   font-weight: 500;
   text-align: center;
   padding-top: 0.5rem;
@@ -333,7 +333,7 @@
   border: 1px solid var(--border);
   background: var(--bg-card);
   font-size: 16px;
-  color: #555;
+  color: var(--text-3);
   cursor: pointer;
   transition: background-color 0.15s ease;
   flex-shrink: 0;
@@ -406,7 +406,7 @@
   width: 2rem;
   height: 2rem;
   border-radius: 7.5px;
-  border: 1px solid #fca5a5;
+  border: 1px solid rgba(200, 30, 30, 0.3);
   background: var(--bg-card);
   font-size: 16px;
   color: rgb(200, 30, 30);
@@ -486,7 +486,7 @@
 .collection-dropdown-msg {
   padding: 10px 14px;
   font-size: 13px;
-  color: #aaa;
+  color: var(--text-3);
   font-weight: 500;
 }
 
@@ -531,7 +531,7 @@
   border-radius: 50%;
   border: none;
   background: transparent;
-  color: #bbb;
+  color: var(--text-muted);
   font-size: 17px;
   cursor: pointer;
   flex-shrink: 0;
@@ -546,7 +546,7 @@
 .collection-dropdown-loading {
   padding: 10px 14px;
   font-size: 13px;
-  color: #bbb;
+  color: var(--text-3);
 }
 
 .collection-dropdown-new {
@@ -599,8 +599,8 @@
 .collection-create-confirm {
   height: 30px;
   padding: 0 10px;
-  background: #111;
-  color: #fff;
+  background: var(--text-1);
+  color: var(--bg);
   border: none;
   border-radius: 6px;
   font-size: 12px;
@@ -619,7 +619,7 @@
   height: 30px;
   padding: 0 8px;
   background: transparent;
-  color: #999;
+  color: var(--text-3);
   border: none;
   border-radius: 6px;
   font-size: 12px;

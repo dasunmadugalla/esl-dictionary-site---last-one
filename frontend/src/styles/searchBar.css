@@ -24,8 +24,8 @@
 }
 
 .random-icon-btn:hover {
-  background: #111;
-  color: #fff;
+  background: var(--text-1);
+  color: var(--bg);
   transform: rotate(20deg);
 }
 
@@ -72,7 +72,7 @@
 }
 
 .searchbar-input-box input::placeholder {
-  color: rgb(180, 180, 180);
+  color: var(--text-muted);
 }
 .search-result-page .searchbar-input-box {
   display: flex;
