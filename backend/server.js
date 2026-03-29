@@ -16,7 +16,16 @@ const PORT = process.env.PORT || 3000;
 
 const app = express();
 
-app.use(cors());
+const allowedOrigins = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(",")
+  : ["http://localhost:5173"];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
+    callback(new Error("Not allowed by CORS"));
+  },
+}));
 app.use(express.json());
 
 const client = new OpenAI({
@@ -32,9 +41,8 @@ app.use("/random-word", random)
 app.use("/account", accountRoutes)
 
 
-// test endpoint
 app.get("/", (req, res) => {
-  res.status(200).json(users);
+  res.status(200).json({ status: "ok" });
 });
 
 
