@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { FiHome } from "react-icons/fi";
 import {
-  TbSparkles,
   TbTrendingUp,
   TbWorld,
   TbUserCircle,
@@ -14,8 +13,6 @@ import {
   TbX,
   TbSun,
   TbMoon,
-  TbInfoCircle,
-  TbMail,
 } from "react-icons/tb";
 import { useAuth } from "../context/AuthContext.jsx";
 import { useTheme } from "../context/ThemeContext.jsx";
@@ -53,17 +50,12 @@ function Navbar({ menuOpen, onClose }) {
 
       {/* <img src={logo} alt="Dictionary" className="site-logo" /> */}
 
+      {/* Section 1 — Discover */}
       <ul>
         <li>
           <NavLink to="/" end className={navClass} onClick={handleNavClick}>
             <FiHome className="nav-icon" />
             <span className="nav-txt">Home</span>
-          </NavLink>
-        </li>
-        <li>
-          <NavLink to="/dashboard" className={navClass} onClick={handleNavClick}>
-            <TbLayoutDashboard className="nav-icon" />
-            <span className="nav-txt">Dashboard</span>
           </NavLink>
         </li>
         <li>
@@ -78,29 +70,18 @@ function Navbar({ menuOpen, onClose }) {
             <span className="nav-txt">Word of the Day</span>
           </NavLink>
         </li>
-        <li>
-          <NavLink to="/about" className={navClass} onClick={handleNavClick}>
-            <TbInfoCircle className="nav-icon" />
-            <span className="nav-txt">About</span>
-          </NavLink>
-        </li>
-        <li>
-          <NavLink to="/contact" className={navClass} onClick={handleNavClick}>
-            <TbMail className="nav-icon" />
-            <span className="nav-txt">Contact</span>
-          </NavLink>
-        </li>
-        <li>
-          <NavLink to="/policy" className={navClass} onClick={handleNavClick}>
-            <TbSparkles className="nav-icon" />
-            <span className="nav-txt">Privacy Policy</span>
-          </NavLink>
-        </li>
       </ul>
 
       <hr />
 
+      {/* Section 2 — My stuff */}
       <ul>
+        <li>
+          <NavLink to="/dashboard" className={navClass} onClick={handleNavClick}>
+            <TbLayoutDashboard className="nav-icon" />
+            <span className="nav-txt">Dashboard</span>
+          </NavLink>
+        </li>
         <li>
           <NavLink to="/bookmarks" className={navClass} onClick={handleNavClick}>
             <TbBookmark className="nav-icon" />

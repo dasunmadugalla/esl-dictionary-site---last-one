@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 import StreakBadge from "./components/StreakBadge";
 import { Outlet } from "react-router-dom";
 import { TbMenu2 } from "react-icons/tb";
@@ -24,6 +25,7 @@ function App() {
 
       <div className="page-content">
         <Outlet />
+        <Footer />
       </div>
 
       <StreakBadge />
