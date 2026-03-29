@@ -120,21 +120,26 @@ function Navbar({ menuOpen, onClose }) {
             <span className="nav-txt">Settings</span>
           </NavLink>
         </li>
-        <li className="account-nav-wrap" onClick={() => setLogoutVisible((v) => !v)}>
-          <div className="nav-account-row">
-            <TbUserCircle className="nav-icon" />
-            <span className="nav-txt nav-email">
-              {loading ? "Loading…" : user ? user.email : "Guest"}
-            </span>
-          </div>
-          {logoutVisible && (
-            <div className="logout-wrapper">
-              <button onClick={handleLogout} className="logout-btn">
-                Log out
-              </button>
+        {user ? (
+          <li className="account-nav-wrap" onClick={() => setLogoutVisible((v) => !v)}>
+            <div className="nav-account-row">
+              <TbUserCircle className="nav-icon" />
+              <span className="nav-txt nav-email">{user.email}</span>
             </div>
-          )}
-        </li>
+            {logoutVisible && (
+              <div className="logout-wrapper">
+                <button onClick={handleLogout} className="logout-btn">Log out</button>
+              </div>
+            )}
+          </li>
+        ) : (
+          <li>
+            <NavLink to="/auth" className={navClass} onClick={handleNavClick}>
+              <TbUserCircle className="nav-icon" />
+              <span className="nav-txt">Sign in</span>
+            </NavLink>
+          </li>
+        )}
       </ul>
     </div>
   );

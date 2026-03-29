@@ -810,6 +810,11 @@ p.definition {
   border-color: rgba(52, 211, 153, 0.25);
 }
 
+[data-theme="dark"] .sentence-word-link:hover {
+  color: #7aadff;
+  border-bottom-color: #7aadff;
+}
+
 [data-theme="dark"] .lexical-badge {
   color: #7aadff;
   background: rgba(100, 160, 255, 0.08);

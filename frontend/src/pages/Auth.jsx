@@ -195,18 +195,6 @@ function Auth() {
           </button>
         </form>
 
-        {/* ── Footer prompt ── */}
-        <p className="account-prompt">
-          {isLogin ? "Don't have an account? " : "Already have an account? "}
-          <button
-            type="button"
-            className="create-account-link"
-            style={{ background: "none", border: "none", padding: 0, cursor: "pointer", font: "inherit" }}
-            onClick={() => switchMode(isLogin ? "signup" : "login")}
-          >
-            {isLogin ? "Create an account" : "Log in"}
-          </button>
-        </p>
       </div>
     </div>
   );
