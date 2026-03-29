@@ -1,11 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { TbSun, TbMoon, TbDownload, TbTrash, TbLock, TbCheck } from "react-icons/tb";
+import { TbSun, TbMoon, TbDownload, TbTrash, TbLock, TbCheck, TbChevronRight, TbMessageCircle } from "react-icons/tb";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
 import { IPContext } from "../context/IPContext";
-import { useContext } from "react";
 import "../styles/settings.css";
 
 function Section({ title, children }) {
@@ -65,7 +64,7 @@ export default function Settings() {
     setDeleteMsg("");
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      const res = await fetch(`${ip}:3000/account`, {
+      const res = await fetch(`${ip}/account`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${session.access_token}` },
       });
@@ -153,6 +152,15 @@ export default function Settings() {
           <Row label="Export bookmarks" hint="Download your bookmarks as a CSV file">
             <button className="settings-btn" onClick={exportBookmarks} disabled={exportLoading}>
               <TbDownload /> {exportLoading ? "Exporting…" : "Export CSV"}
+            </button>
+          </Row>
+        </Section>
+
+        {/* ── Feedback ── */}
+        <Section title="Feedback">
+          <Row label="Share feedback" hint="Suggestions, bug reports, ideas — we read everything">
+            <button className="settings-btn settings-row-link" onClick={() => navigate("/feedback")}>
+              <TbMessageCircle /> Give feedback <TbChevronRight className="settings-chevron" />
             </button>
           </Row>
         </Section>

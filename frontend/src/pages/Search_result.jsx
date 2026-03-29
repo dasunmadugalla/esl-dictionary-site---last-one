@@ -19,7 +19,7 @@ function Search_result() {
       const token = session?.access_token;
 
       const headers = token ? { Authorization: `Bearer ${token}` } : {};
-      const res = await fetch(`${ip}:3000/word/${encodeURIComponent(search)}`, { headers });
+      const res = await fetch(`${ip}/word/${encodeURIComponent(search)}`, { headers });
 
       if (!res.ok) throw new Error(`Server error: ${res.status}`);
       return res.json();

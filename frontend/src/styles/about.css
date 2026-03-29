@@ -1,0 +1,134 @@
+.about-page {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 5rem 1.5rem 7rem;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Header ───────────────────────────────────────────────── */
+.about-header {
+  padding-bottom: 3rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.about-eyebrow {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+}
+
+.about-title {
+  font-size: clamp(1.6rem, 4.5vw, 2.2rem);
+  font-weight: 700;
+  color: var(--text-1);
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+}
+
+/* ── Intro ────────────────────────────────────────────────── */
+.about-intro {
+  padding: 3rem 0;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.about-intro p {
+  font-size: 15px;
+  color: var(--text-2);
+  line-height: 1.9;
+}
+
+/* ── Principles ───────────────────────────────────────────── */
+.about-principles {
+  padding: 3rem 0;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.about-principle {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+  padding: 1.4rem 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.about-principle:last-child {
+  border-bottom: none;
+}
+
+.about-principle-num {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+  padding-top: 2px;
+  min-width: 22px;
+  flex-shrink: 0;
+}
+
+.about-principle-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-1);
+  margin-bottom: 0.3rem;
+}
+
+.about-principle-body {
+  font-size: 13px;
+  color: var(--text-3);
+  line-height: 1.75;
+}
+
+/* ── Footer row ───────────────────────────────────────────── */
+.about-footer-row {
+  padding-top: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.about-footer-text {
+  font-size: 13px;
+  color: var(--text-3);
+  line-height: 1.7;
+  max-width: 340px;
+}
+
+.about-cta-btn {
+  flex-shrink: 0;
+  height: 36px;
+  padding: 0 1.1rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-1);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.about-cta-btn:hover {
+  background: var(--bg-hover);
+  border-color: var(--text-muted);
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 500px) {
+  .about-page        { padding: 3.5rem 1.25rem 5rem; }
+  .about-footer-row  { flex-direction: column; align-items: flex-start; }
+}

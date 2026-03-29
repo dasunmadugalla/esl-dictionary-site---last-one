@@ -14,6 +14,7 @@ import {
   TbX,
   TbSun,
   TbMoon,
+  TbInfoCircle,
 } from "react-icons/tb";
 import { useAuth } from "../context/AuthContext.jsx";
 import { useTheme } from "../context/ThemeContext.jsx";
@@ -74,6 +75,12 @@ function Navbar({ menuOpen, onClose }) {
           <NavLink to="/word-of-the-day" className={navClass} onClick={handleNavClick}>
             <TbWorld className="nav-icon" />
             <span className="nav-txt">Word of the Day</span>
+          </NavLink>
+        </li>
+        <li>
+          <NavLink to="/about" className={navClass} onClick={handleNavClick}>
+            <TbInfoCircle className="nav-icon" />
+            <span className="nav-txt">About</span>
           </NavLink>
         </li>
         <li>

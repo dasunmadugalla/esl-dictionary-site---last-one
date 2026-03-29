@@ -59,7 +59,7 @@ function Searchbar({ externalInputRef } = {}) {
     // Record search in backend if logged in
     if (user?.email) {
       try {
-        const res = await fetch(`${ip}:3000/search/add-search`, {
+        const res = await fetch(`${ip}/search/add-search`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -114,7 +114,7 @@ function Searchbar({ externalInputRef } = {}) {
 
   const handleRandom = async () => {
     try {
-      const res = await fetch(`${ip}:3000/random-word`);
+      const res = await fetch(`${ip}/random-word`);
       const { word } = await res.json();
       navigate(`/word/${word}`);
     } catch (err) {

@@ -1,0 +1,302 @@
+/* ── CSS variables for type colors ───────────────────────── */
+:root {
+  --af-blue:   #2563eb;
+  --af-amber:  #d97706;
+  --af-red:    #dc2626;
+  --af-purple: #7c3aed;
+}
+
+[data-theme="dark"] {
+  --af-blue:   #7aadff;
+  --af-amber:  #fbbf24;
+  --af-red:    #f87171;
+  --af-purple: #c084fc;
+}
+
+/* ── Page ─────────────────────────────────────────────────── */
+.af-page {
+  min-height: 100vh;
+  background: var(--bg-secondary);
+  padding: 4rem 1.5rem;
+  display: flex;
+  justify-content: center;
+}
+
+.af-wrapper {
+  width: 100%;
+  max-width: 720px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ── Header ───────────────────────────────────────────────── */
+.af-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.af-header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.af-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-3);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.af-back-btn:hover { color: var(--text-1); }
+
+.af-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-1);
+}
+
+.af-sub {
+  font-size: 12px;
+  color: var(--text-3);
+  margin-top: 0.15rem;
+}
+
+.af-refresh-btn {
+  height: 36px;
+  width: 36px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.af-refresh-btn:disabled { opacity: 0.5; cursor: default; }
+
+@keyframes af-rotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.af-spin { animation: af-rotate 0.8s linear infinite; }
+
+/* ── Stat cards ───────────────────────────────────────────── */
+.af-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+}
+
+.af-stat-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 1rem 0.5rem;
+  border-radius: 12px;
+  border: 1.5px solid var(--border);
+  background: var(--bg-card);
+  cursor: pointer;
+  transition: border-color 0.15s, background-color 0.15s;
+  font-family: inherit;
+}
+
+.af-stat-card:hover {
+  border-color: var(--af-accent);
+}
+
+.af-stat-card--active {
+  border-color: var(--af-accent);
+  background: var(--bg-subtle);
+}
+
+.af-stat-icon {
+  font-size: 1.25rem;
+  color: var(--af-accent);
+}
+
+.af-stat-num {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--text-1);
+  line-height: 1;
+}
+
+.af-stat-lbl {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--text-3);
+}
+
+/* ── Filter bar ───────────────────────────────────────────── */
+.af-filter-bar {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.af-filter-btn {
+  height: 30px;
+  padding: 0 0.875rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-3);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.af-filter-btn:hover { color: var(--text-1); }
+
+.af-filter-btn--active {
+  background: var(--text-1);
+  color: var(--bg);
+  border-color: var(--text-1);
+}
+
+/* ── List ─────────────────────────────────────────────────── */
+.af-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.af-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--af-accent);
+  border-radius: 10px;
+  padding: 1rem 1.125rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.af-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.af-type-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.af-time {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.af-message {
+  font-size: 14px;
+  color: var(--text-2);
+  line-height: 1.65;
+  white-space: pre-wrap;
+}
+
+.af-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding-top: 0.4rem;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.af-email {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.af-delete-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 26px;
+  width: 26px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 14px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s, background-color 0.15s;
+}
+
+.af-delete-btn:hover {
+  color: #dc2626;
+  border-color: rgba(220, 38, 38, 0.25);
+  background: rgba(220, 38, 38, 0.05);
+}
+
+.af-delete-btn:disabled { opacity: 0.4; cursor: default; }
+
+/* ── States ───────────────────────────────────────────────── */
+.af-loading, .af-empty {
+  padding: 2rem;
+  text-align: center;
+  font-size: 14px;
+  color: var(--text-3);
+  font-weight: 500;
+}
+
+.af-denied {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  color: var(--text-1);
+}
+
+.af-denied button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-card);
+  color: var(--text-1);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .af-stats { grid-template-columns: repeat(2, 1fr); }
+  .af-page  { padding: 2.5rem 1rem; }
+}

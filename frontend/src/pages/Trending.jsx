@@ -70,7 +70,7 @@ function Trending() {
         <ol className="trending-word-list">
           {wordCounts.map((item, index) => (
             <li
-              key={index}
+              key={item.word}
               className="trending-word-item"
               onClick={() => navigate(`/word/${encodeURIComponent(item.word)}`)}
             >

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../context/AuthContext.jsx";
 import { useNavigate } from "react-router-dom";
-import { TbStarFilled } from "react-icons/tb";
+import { TbStarFilled, TbCards, TbBrain } from "react-icons/tb";
 import Loader from "../components/Loader.jsx";
 import Lexicaldata from "../components/Lexicaldata.jsx";
 import { IPContext } from "../context/IPContext";
@@ -70,29 +70,20 @@ function Bookmarks() {
     }
 
     try {
-      // 🔥 trigger animation
-      setRemovingIds((prev) => [...prev, wordID]);
-
-      // 🔥 wait for animation to finish
-      setTimeout(() => {
-        setBookmarkdata((prev) => prev.filter((item) => item.word !== wordID));
-
-        // cleanup
-        setRemovingIds((prev) => prev.filter((id) => id !== wordID));
-      }, 300); // must match CSS transition
-
-      const res = await fetch(`${ip}:3000/bookmark`, {
+      const res = await fetch(`${ip}/bookmark`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: user.email,
-          wordID: wordID,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: user.email, wordID: wordID }),
       });
 
-      const data = await res.json();
+      if (!res.ok) throw new Error("Failed to remove bookmark");
+
+      // Only animate out after server confirms deletion
+      setRemovingIds((prev) => [...prev, wordID]);
+      setTimeout(() => {
+        setBookmarkdata((prev) => prev.filter((item) => item.word !== wordID));
+        setRemovingIds((prev) => prev.filter((id) => id !== wordID));
+      }, 300);
     } catch (err) {
       console.error(err);
     }
@@ -124,6 +115,22 @@ function Bookmarks() {
             <div className="bookmarks-header">
               <h2 className="bookmarks-title">Bookmarks</h2>
               <span className="bookmarks-count">{bookmarkData.length}</span>
+              {bookmarkData.length > 0 && (
+                <>
+                  <button
+                    className="fc-practice-btn"
+                    onClick={() => navigate("/flashcards?source=bookmarks")}
+                  >
+                    <TbCards /> Practice
+                  </button>
+                  <button
+                    className="fc-practice-btn fc-practice-btn--review"
+                    onClick={() => navigate("/review?source=bookmarks")}
+                  >
+                    <TbBrain /> Review
+                  </button>
+                </>
+              )}
             </div>
 
             <div className="bookmark-controls">
@@ -175,12 +182,12 @@ function Bookmarks() {
               </div>
             </div>
 
-            {sortedData.map((row, index) => (
+            {sortedData.map((row) => (
               <div
                 className={`bookmark-card ${
                   removingIds.includes(row.word) ? "removing" : ""
                 }`}
-                key={index}
+                key={row.word}
                 onClick={() =>
                   navigate(`/word/${encodeURIComponent(row.word)}`)
                 }

@@ -153,6 +153,23 @@
   color: var(--text-3);
 }
 
+/* ── Items 4+ alternating rows + left accent stripe ──────── */
+
+.trending-word-item:nth-child(n+4) {
+  border-left: 3px solid transparent;
+  padding-left: calc(1rem - 2px);
+}
+
+.trending-word-item:nth-child(even):nth-child(n+4) {
+  background-color: var(--bg-card);
+  border-left-color: var(--border);
+}
+
+.trending-word-item:nth-child(odd):nth-child(n+4) {
+  background-color: var(--bg-subtle);
+  border-left-color: var(--border-subtle);
+}
+
 /* ── Dark mode overrides ────────────────────────────────── */
 
 [data-theme="dark"] .trending-word-item:nth-child(1) {
@@ -166,15 +183,16 @@
   color: #f5d060;
 }
 
+/* Silver: push it noticeably lighter/cooler so it stands apart from the dark cards below */
 [data-theme="dark"] .trending-word-item:nth-child(2) {
-  background: linear-gradient(to right, #2a2a2a, #353535);
-  border-color: #444;
+  background: linear-gradient(to right, #323a42, #424e58);
+  border-color: #556070;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
 [data-theme="dark"] .trending-word-item:nth-child(2) .trending-rank,
 [data-theme="dark"] .trending-word-item:nth-child(2) .trending-word {
-  color: #c8c8c8;
+  color: #c8d8e8;
 }
 
 [data-theme="dark"] .trending-word-item:nth-child(3) {
@@ -186,6 +204,17 @@
 [data-theme="dark"] .trending-word-item:nth-child(3) .trending-rank,
 [data-theme="dark"] .trending-word-item:nth-child(3) .trending-word {
   color: #d4956a;
+}
+
+/* Dark mode alternating rows 4+ — make the contrast clear */
+[data-theme="dark"] .trending-word-item:nth-child(even):nth-child(n+4) {
+  background-color: var(--bg-card);
+  border-left-color: #333;
+}
+
+[data-theme="dark"] .trending-word-item:nth-child(odd):nth-child(n+4) {
+  background-color: var(--bg-subtle);
+  border-left-color: #2a2a2a;
 }
 
 /* ── Responsive ─────────────────────────────────────────── */

@@ -6,7 +6,7 @@ import { useContext } from "react";
 function RandomButton() {
   const navigate = useNavigate();
   const { ip } = useContext(IPContext);
-  const endpoint = `${ip}:3000/random-word`; // include http://
+  const endpoint = `${ip}/random-word`;
 
   const handleRandom = async () => {
     try {

@@ -333,6 +333,11 @@
 }
 
 /* ── Streak badge (global, fixed corner) ─────────────────── */
+@keyframes streak-pulse {
+  0%, 100% { box-shadow: 0 4px 16px rgba(0,0,0,0.2), 0 0 0 0 rgba(255,107,0,0.35); }
+  50%       { box-shadow: 0 4px 16px rgba(0,0,0,0.2), 0 0 0 6px rgba(255,107,0,0); }
+}
+
 .streak-badge {
   position: fixed;
   bottom: 1.5rem;
@@ -341,22 +346,27 @@
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  background: #111;
+  background: #1a1a1a;
+  border: 1.5px solid rgba(255, 107, 0, 0.4);
   border-radius: 999px;
   padding: 0.5rem 0.85rem;
   cursor: pointer;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  animation: streak-pulse 2.5s ease-in-out infinite;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .streak-badge:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.28);
+  animation: none;
+  box-shadow: 0 6px 24px rgba(255, 107, 0, 0.25), 0 2px 8px rgba(0,0,0,0.3);
+  border-color: rgba(255, 107, 0, 0.7);
 }
 
 .streak-badge-icon {
   color: #ff6b00;
   font-size: 17px;
+  filter: drop-shadow(0 0 4px rgba(255,107,0,0.6));
 }
 
 .streak-badge-number {
@@ -379,6 +389,12 @@
 .streak-badge:hover .streak-badge-label {
   max-width: 5rem;
   opacity: 1;
+}
+
+/* Light mode — keep it dark so it stands out against white pages */
+[data-theme="light"] .streak-badge {
+  background: #111;
+  border-color: rgba(255, 107, 0, 0.3);
 }
 
 /* ── History link card ────────────────────────────────────── */

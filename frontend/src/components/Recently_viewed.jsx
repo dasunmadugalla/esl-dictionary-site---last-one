@@ -38,7 +38,7 @@ function Recently_viewed() {
       <h2 className="recent-searches-title">recent searches</h2>
       <ol>
         {data.map((word, index) => (
-          <li key={index} onClick={() => navigate(`/word/${word}`)}>
+          <li key={word} onClick={() => navigate(`/word/${word}`)}>
             {word}
           </li>
         ))}

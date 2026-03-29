@@ -1,6 +1,7 @@
 // src/context/AuthContext.jsx
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
+import Loader from "../components/Loader";
 
 const AuthContext = createContext(null);
 
@@ -39,18 +40,7 @@ export const AuthProvider = ({ children }) => {
 
   // Optional: display a simple fallback while loading
   if (loading) {
-    return (
-      <div
-        style={{
-          textAlign: "center",
-          marginTop: "2rem",
-          fontSize: "1.2rem",
-          color: "#555",
-        }}
-      >
-        Loading…
-      </div>
-    );
+    return <Loader />;
   }
 
   return (

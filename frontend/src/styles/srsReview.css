@@ -1,0 +1,217 @@
+/* ── Setup screen ─────────────────────────────────────────── */
+.srs-setup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  width: 100%;
+  max-width: 480px;
+  text-align: center;
+}
+
+.srs-setup-icon {
+  font-size: 2.75rem;
+  color: var(--text-3);
+}
+
+.srs-setup-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-1);
+}
+
+.srs-setup-sub {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text-muted);
+  margin-top: -0.75rem;
+}
+
+.srs-setup-desc {
+  font-size: 13px;
+  color: var(--text-3);
+  line-height: 1.6;
+  max-width: 340px;
+}
+
+/* ── Stats row (shared by setup + nodue) ──────────────────── */
+.srs-stats-row {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.srs-stat-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  min-width: 80px;
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+}
+
+.srs-stat-num {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--text-1);
+  line-height: 1;
+}
+
+.srs-stat-lbl {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.srs-stat-box--new    .srs-stat-num { color: #2563eb; }
+.srs-stat-box--review .srs-stat-num { color: #00a368; }
+
+[data-theme="dark"] .srs-stat-box--new    .srs-stat-num { color: #7aadff; }
+[data-theme="dark"] .srs-stat-box--review .srs-stat-num { color: #34d399; }
+
+/* ── Start button ─────────────────────────────────────────── */
+.srs-start-btn {
+  height: 50px;
+  padding: 0 2.5rem;
+  border-radius: 12px;
+  border: none;
+  background: var(--text-1);
+  color: var(--bg);
+  font-size: 15px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+  margin-top: 0.5rem;
+}
+
+.srs-start-btn:hover { opacity: 0.85; }
+
+/* ── All caught up screen ─────────────────────────────────── */
+.srs-nodue {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  max-width: 480px;
+  text-align: center;
+  padding-top: 1rem;
+}
+
+.srs-nodue-icon {
+  font-size: 3rem;
+  color: var(--text-3);
+}
+
+.srs-nodue-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-1);
+}
+
+.srs-nodue-sub {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-3);
+  margin-top: -0.5rem;
+}
+
+.srs-nodue-body {
+  font-size: 15px;
+  color: var(--text-2);
+}
+
+.srs-nodue-next {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 13px;
+  color: var(--text-3);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 5px 14px;
+}
+
+.srs-nodue-next strong { color: var(--text-2); }
+
+/* ── Card meta row (New / Review badge + frequency) ──────── */
+.srs-card-meta {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.srs-badge {
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 2px 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.srs-badge--new {
+  background: rgba(37, 99, 235, 0.1);
+  color: #2563eb;
+  border: 1px solid rgba(37, 99, 235, 0.2);
+}
+
+.srs-badge--review {
+  background: rgba(0, 163, 104, 0.1);
+  color: #00a368;
+  border: 1px solid rgba(0, 163, 104, 0.2);
+}
+
+[data-theme="dark"] .srs-badge--new    { background: rgba(122,173,255,0.12); color: #7aadff; border-color: rgba(122,173,255,0.2); }
+[data-theme="dark"] .srs-badge--review { background: rgba(52,211,153,0.1);   color: #34d399; border-color: rgba(52,211,153,0.2);  }
+
+/* ── Interval label inside action buttons ─────────────────── */
+.srs-btn-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  line-height: 1.2;
+}
+
+.srs-btn-label {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.srs-btn-interval {
+  font-size: 11px;
+  font-weight: 600;
+  opacity: 0.65;
+}
+
+/* ── Results note ─────────────────────────────────────────── */
+.srs-results-note {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 12px;
+  color: var(--text-3);
+  text-align: center;
+  padding: 0.75rem 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  width: 100%;
+}
+
+.srs-note-icon {
+  flex-shrink: 0;
+  font-size: 15px;
+}

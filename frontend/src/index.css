@@ -17,10 +17,16 @@
 @import url("./styles/notfound.css");
 @import url("./styles/settings.css");
 @import url("./styles/searchHistory.css");
+@import url("./styles/flashcards.css");
+@import url("./styles/wordSnippet.css");
+@import url("./styles/srsReview.css");
+@import url("./styles/adminFeedback.css");
+@import url("./styles/feedback.css");
+@import url("./styles/about.css");
 :root {
   --grey-outline: rgb(208, 208, 208);
 
-  --bg:            #f2f2f2;
+  --bg:            #ffffff;
   --bg-secondary:  rgb(247, 247, 247);
   --bg-card:       #ffffff;
   --bg-subtle:     #f4f4f4;

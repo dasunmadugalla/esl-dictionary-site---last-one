@@ -42,6 +42,7 @@ function Word_container({ details: searchResult = {} }) {
   const [selectedVoice, setSelectedVoice] = useState(null);
   const [isLoadingVoice, setIsLoadingVoice] = useState(false);
   const [bookmarked, setBookmarked] = useState(searchResult.bookmarked ?? false);
+  const [starPopping, setStarPopping] = useState(false);
   const [showSnippet, setShowSnippet] = useState(false);
   const [collectionMenuOpen, setCollectionMenuOpen] = useState(false);
   const [userCollections, setUserCollections] = useState([]);
@@ -222,9 +223,11 @@ function Word_container({ details: searchResult = {} }) {
     if (!user) { navigate("/auth"); return; }
 
     setBookmarked((prev) => !prev);
+    setStarPopping(true);
+    setTimeout(() => setStarPopping(false), 600);
 
     try {
-      await fetch(`${ip}:3000/bookmark`, {
+      await fetch(`${ip}/bookmark`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: user.email, wordID }),
@@ -336,9 +339,9 @@ function Word_container({ details: searchResult = {} }) {
             onClick={() => bookmarkWord(searchResult.word)}
           >
             {bookmarked ? (
-              <TbStarFilled className="interaction-icon bookmark-star" />
+              <TbStarFilled className={`interaction-icon bookmark-star${starPopping ? " star-pop" : ""}`} />
             ) : (
-              <TbStar className="interaction-icon" />
+              <TbStar className={`interaction-icon${starPopping ? " star-unpop" : ""}`} />
             )}
           </button>
 
@@ -364,7 +367,7 @@ function Word_container({ details: searchResult = {} }) {
                   <p className="collection-dropdown-loading">Loading…</p>
                 ) : (
                   <>
-                    {userCollections.length === 0 && !showCreateForm && (
+                    {userCollections.length === 0 && !showCreateModal && (
                       <p className="collection-dropdown-msg">No collections yet</p>
                     )}
                     {userCollections.map((col) => (
@@ -434,7 +437,7 @@ function Word_container({ details: searchResult = {} }) {
         )}
 
         {searchResult.meanings?.map((meaning, index) => (
-          <div key={index} className="definition-box">
+          <div key={`${meaning.part_of_speech}-${index}`} className="definition-box">
             <span className="word-class">{meaning.part_of_speech}</span>
             <p className="definition"><ClickableSentence text={meaning.definition} /></p>
 
@@ -568,8 +571,8 @@ function Word_container({ details: searchResult = {} }) {
           <div className="bottom-ribbon">
             <h5>Related Words</h5>
             <ul className="related-words-wrapper">
-              {searchResult.related_words.map((word, index) => (
-                <li className="related-word" key={index}>
+              {searchResult.related_words.map((word) => (
+                <li className="related-word" key={word}>
                   <Link to={`/word/${encodeURIComponent(word)}`}>{word}</Link>
                 </li>
               ))}
