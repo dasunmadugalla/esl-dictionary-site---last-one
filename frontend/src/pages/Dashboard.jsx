@@ -13,6 +13,7 @@ import {
   TbChevronRight,
 } from "react-icons/tb";
 import Loader from "../components/Loader.jsx";
+import { useToast } from "../context/ToastContext.jsx";
 
 // ── Weekly line chart ──────────────────────────────────────────
 function WeeklyChart({ data }) {
@@ -154,6 +155,7 @@ function getDailyData(searches, createdAt) {
 function Dashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
     streak: 0,
@@ -173,18 +175,14 @@ function Dashboard() {
 
     const fetchData = async () => {
       setLoading(true);
+      try {
 
-      const [{ data: searches }, { data: bookmarks }] = await Promise.all([
-        supabase
-          .from("searches")
-          .select("word, created_at")
-          .eq("email", user.email)
-          .order("created_at", { ascending: false }),
-        supabase
-          .from("Bookmarks")
-          .select("wordIDs")
-          .eq("email", user.email),
+      const [{ data: searches, error: sErr }, { data: bookmarks, error: bErr }] = await Promise.all([
+        supabase.from("searches").select("word, created_at").eq("email", user.email).order("created_at", { ascending: false }),
+        supabase.from("Bookmarks").select("wordIDs").eq("email", user.email),
       ]);
+
+      if (sErr || bErr) throw sErr || bErr;
 
       const bookmarkCount = new Set(bookmarks?.map((b) => b.wordIDs) ?? []).size;
 
@@ -257,7 +255,11 @@ function Dashboard() {
         setDailyData(getDailyData(searches, user.created_at));
       }
 
-      setLoading(false);
+      } catch (err) {
+        showToast("Failed to load dashboard data. Please refresh.");
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchData();

@@ -6,11 +6,13 @@ import { TbStarFilled, TbCards, TbBrain } from "react-icons/tb";
 import Loader from "../components/Loader.jsx";
 import Lexicaldata from "../components/Lexicaldata.jsx";
 import { IPContext } from "../context/IPContext";
+import { useToast } from "../context/ToastContext.jsx";
 
 function Bookmarks() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const {ip} = useContext(IPContext)
+  const { ip } = useContext(IPContext);
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [bookmarkData, setBookmarkdata] = useState([]);
   const [error, setError] = useState(null);
@@ -64,10 +66,15 @@ function Bookmarks() {
 
   // 🔥 REMOVE WITH ANIMATION
   async function toggleBookmark(wordID) {
-    if (!user) {
-      alert("You must be logged in.");
-      return;
-    }
+    if (!user) return;
+
+    // Optimistic — animate out immediately
+    const removed = bookmarkData.find((item) => item.word === wordID);
+    setRemovingIds((prev) => [...prev, wordID]);
+    setTimeout(() => {
+      setBookmarkdata((prev) => prev.filter((item) => item.word !== wordID));
+      setRemovingIds((prev) => prev.filter((id) => id !== wordID));
+    }, 300);
 
     try {
       const res = await fetch(`${ip}/bookmark`, {
@@ -75,17 +82,11 @@ function Bookmarks() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: user.email, wordID: wordID }),
       });
-
-      if (!res.ok) throw new Error("Failed to remove bookmark");
-
-      // Only animate out after server confirms deletion
-      setRemovingIds((prev) => [...prev, wordID]);
-      setTimeout(() => {
-        setBookmarkdata((prev) => prev.filter((item) => item.word !== wordID));
-        setRemovingIds((prev) => prev.filter((id) => id !== wordID));
-      }, 300);
+      if (!res.ok) throw new Error("Failed");
     } catch (err) {
-      console.error(err);
+      if (removed) setBookmarkdata((prev) => [...prev, removed]);
+      setRemovingIds((prev) => prev.filter((id) => id !== wordID));
+      showToast("Failed to remove bookmark. Try again.");
     }
   }
 

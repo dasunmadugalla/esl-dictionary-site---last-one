@@ -9,6 +9,7 @@ import Word_snippet from "../components/Word_snippet";
 import * as htmlToImage from "html-to-image";
 import RandomButton from "./RandomButton";
 import { supabase } from "../lib/supabase";
+import { useToast } from "../context/ToastContext.jsx";
 
 function ClickableSentence({ text }) {
   if (!text) return null;
@@ -57,6 +58,7 @@ function Word_container({ details: searchResult = {} }) {
 
   const { user } = useAuth();
   const { ip } = useContext(IPContext);
+  const { showToast } = useToast();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -151,13 +153,20 @@ function Word_container({ details: searchResult = {} }) {
     setCollectionMenuOpen((prev) => !prev);
     if (collectionMenuOpen) return;
     setCollectionsLoading(true);
-    const [{ data: cols }, { data: wordCols }] = await Promise.all([
-      supabase.from("Collections").select("id, name").eq("email", user.email).order("created_at"),
-      supabase.from("CollectionWords").select("collection_id").eq("email", user.email).eq("word", searchResult.word),
-    ]);
-    setUserCollections(cols || []);
-    setWordInCollections(new Set((wordCols || []).map((r) => r.collection_id)));
-    setCollectionsLoading(false);
+    try {
+      const [{ data: cols, error: e1 }, { data: wordCols, error: e2 }] = await Promise.all([
+        supabase.from("Collections").select("id, name").eq("email", user.email).order("created_at"),
+        supabase.from("CollectionWords").select("collection_id").eq("email", user.email).eq("word", searchResult.word),
+      ]);
+      if (e1 || e2) throw e1 || e2;
+      setUserCollections(cols || []);
+      setWordInCollections(new Set((wordCols || []).map((r) => r.collection_id)));
+    } catch {
+      showToast("Failed to load collections. Try again.");
+      setCollectionMenuOpen(false);
+    } finally {
+      setCollectionsLoading(false);
+    }
   };
 
   const createAndAddCollection = async () => {
@@ -172,12 +181,13 @@ function Word_container({ details: searchResult = {} }) {
       .select("id, name")
       .single();
 
-    if (!error && col) {
-      await supabase.from("CollectionWords").insert({
-        collection_id: col.id,
-        word: searchResult.word,
-        email: user.email,
+    if (error || !col) {
+      showToast("Failed to create collection. Try again.");
+    } else {
+      const { error: insertErr } = await supabase.from("CollectionWords").insert({
+        collection_id: col.id, word: searchResult.word, email: user.email,
       });
+      if (insertErr) showToast("Collection created but word wasn't added. Try again.");
       setUserCollections((prev) => [...prev, col]);
       setWordInCollections((prev) => new Set([...prev, col.id]));
     }
@@ -199,22 +209,22 @@ function Word_container({ details: searchResult = {} }) {
   const toggleWordInCollection = async (collectionId) => {
     const word = searchResult.word;
     if (wordInCollections.has(collectionId)) {
-      await supabase.from("CollectionWords").delete().eq("collection_id", collectionId).eq("word", word).eq("email", user.email);
       setWordInCollections((prev) => { const next = new Set(prev); next.delete(collectionId); return next; });
-    } else {
-      // duplicate protection — check DB before inserting
-      const { data: existing } = await supabase
-        .from("CollectionWords")
-        .select("id")
-        .eq("collection_id", collectionId)
-        .eq("word", word)
-        .eq("email", user.email)
-        .maybeSingle();
-
-      if (!existing) {
-        await supabase.from("CollectionWords").insert({ collection_id: collectionId, word, email: user.email });
+      const { error } = await supabase.from("CollectionWords").delete().eq("collection_id", collectionId).eq("word", word).eq("email", user.email);
+      if (error) {
+        setWordInCollections((prev) => new Set([...prev, collectionId]));
+        showToast("Failed to remove from collection. Try again.");
       }
+    } else {
       setWordInCollections((prev) => new Set([...prev, collectionId]));
+      const { data: existing } = await supabase.from("CollectionWords").select("id").eq("collection_id", collectionId).eq("word", word).eq("email", user.email).maybeSingle();
+      if (!existing) {
+        const { error } = await supabase.from("CollectionWords").insert({ collection_id: collectionId, word, email: user.email });
+        if (error) {
+          setWordInCollections((prev) => { const next = new Set(prev); next.delete(collectionId); return next; });
+          showToast("Failed to add to collection. Try again.");
+        }
+      }
     }
   };
 
@@ -227,15 +237,15 @@ function Word_container({ details: searchResult = {} }) {
     setTimeout(() => setStarPopping(false), 600);
 
     try {
-      await fetch(`${ip}/bookmark`, {
+      const res = await fetch(`${ip}/bookmark`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: user.email, wordID }),
       });
+      if (!res.ok) throw new Error("Failed");
     } catch (err) {
-      console.error("Bookmark error:", err);
-      // Revert optimistic update on failure
       setBookmarked((prev) => !prev);
+      showToast("Failed to update bookmark. Try again.");
     }
   };
 
@@ -256,7 +266,7 @@ function Word_container({ details: searchResult = {} }) {
       link.href = dataUrl;
       link.click();
     } catch (err) {
-      console.error("Download failed:", err);
+      showToast("Download failed. Try again.");
     }
   };
 

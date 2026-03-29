@@ -33,10 +33,10 @@ function Trending() {
   const navigate = useNavigate();
   const [timeFrame, setTimeFrame] = useState("24h");
 
-  const { data: wordCounts = [], isLoading } = useQuery({
+  const { data: wordCounts = [], isLoading, isError } = useQuery({
     queryKey: ["trending", timeFrame],
     queryFn: () => fetchTrending(timeFrame),
-    staleTime: 5 * 60 * 1000, // cache 5 minutes per timeframe
+    staleTime: 5 * 60 * 1000,
   });
 
   return (
@@ -64,6 +64,8 @@ function Trending() {
 
       {isLoading ? (
         <Loader />
+      ) : isError ? (
+        <p className="trending-empty">Failed to load trending words. Please refresh.</p>
       ) : wordCounts.length === 0 ? (
         <p className="trending-empty">No searches recorded in this period.</p>
       ) : (

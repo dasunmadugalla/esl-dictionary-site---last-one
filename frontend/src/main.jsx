@@ -5,6 +5,7 @@ import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import App from "./App.jsx";
 import { AuthProvider } from "./context/AuthContext.jsx";
+import { ToastProvider } from "./context/ToastContext.jsx";
 import { IPProvider } from "./context/IPContext.jsx";
 import { ThemeProvider } from "./context/ThemeContext.jsx";
 import Loader from "./components/Loader.jsx";
@@ -41,6 +42,7 @@ const SRSReview      = lazy(() => import("./pages/SRSReview.jsx"));
 const AdminFeedback  = lazy(() => import("./pages/AdminFeedback.jsx"));
 const Feedback       = lazy(() => import("./pages/Feedback.jsx"));
 const About          = lazy(() => import("./pages/About.jsx"));
+const Contact        = lazy(() => import("./pages/Contact.jsx"));
 
 const router = createBrowserRouter([
   {
@@ -62,6 +64,7 @@ const router = createBrowserRouter([
       { path: "/admin/feedback",  element: <ProtectedRoute><Suspense fallback={<Loader />}><AdminFeedback /></Suspense></ProtectedRoute> },
       { path: "/feedback",        element: <ProtectedRoute><Suspense fallback={<Loader />}><Feedback /></Suspense></ProtectedRoute> },
       { path: "/about",           element: <Suspense fallback={<Loader />}><About /></Suspense> },
+      { path: "/contact",         element: <Suspense fallback={<Loader />}><Contact /></Suspense> },
     ],
   },
   { path: "/auth", element: <Suspense fallback={<Loader />}><Auth /></Suspense> },
@@ -76,9 +79,11 @@ createRoot(document.getElementById("root")).render(
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <AuthProvider>
-          <IPProvider>
-            <RouterProvider router={router} />
-          </IPProvider>
+          <ToastProvider>
+            <IPProvider>
+              <RouterProvider router={router} />
+            </IPProvider>
+          </ToastProvider>
         </AuthProvider>
       </ThemeProvider>
     </QueryClientProvider>

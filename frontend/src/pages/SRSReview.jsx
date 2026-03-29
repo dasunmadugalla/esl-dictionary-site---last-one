@@ -6,6 +6,7 @@ import {
   TbArrowLeft, TbCheck, TbX, TbBrain, TbCalendar,
 } from "react-icons/tb";
 import Loader from "../components/Loader.jsx";
+import { useToast } from "../context/ToastContext.jsx";
 import "../styles/srsReview.css";
 
 // ── SM-2 algorithm ──────────────────────────────────────────
@@ -77,6 +78,7 @@ export default function SRSReview() {
   const source       = params.get("source");
   const collectionId = params.get("id");
 
+  const { showToast } = useToast();
   const [phase, setPhase]             = useState("loading");
   const [title, setTitle]             = useState("");
   const [allWords, setAllWords]       = useState([]);
@@ -96,34 +98,33 @@ export default function SRSReview() {
   useEffect(() => {
     if (!user) return;
     (async () => {
+      try {
       let wordIds = [];
 
       if (source === "bookmarks") {
         setTitle("Bookmarks");
-        const { data } = await supabase
-          .from("Bookmarks").select("wordIDs").eq("email", user.email);
+        const { data, error } = await supabase.from("Bookmarks").select("wordIDs").eq("email", user.email);
+        if (error) throw error;
         wordIds = (data || []).map((b) => b.wordIDs);
       } else if (source === "collection" && collectionId) {
-        const [{ data: col }, { data: cw }] = await Promise.all([
+        const [{ data: col, error: e1 }, { data: cw, error: e2 }] = await Promise.all([
           supabase.from("Collections").select("name").eq("id", collectionId).single(),
-          supabase.from("CollectionWords").select("word")
-            .eq("collection_id", collectionId).eq("email", user.email),
+          supabase.from("CollectionWords").select("word").eq("collection_id", collectionId).eq("email", user.email),
         ]);
+        if (e1 || e2) throw e1 || e2;
         setTitle(col?.name || "Collection");
         wordIds = (cw || []).map((r) => r.word);
       }
 
       if (wordIds.length === 0) { setPhase("empty"); return; }
 
-      const { data: wordData } = await supabase
-        .from("Words")
-        .select("word, definitions, frequency, complexity, register")
-        .in("word", wordIds);
+      const { data: wordData, error: wErr } = await supabase
+        .from("Words").select("word, definitions, frequency, complexity, register").in("word", wordIds);
+      if (wErr) throw wErr;
 
       // SRSCards table may not exist yet — treat errors as empty
       const { data: srsRaw } = await supabase
-        .from("SRSCards")
-        .select("*").eq("email", user.email).in("word", wordIds);
+        .from("SRSCards").select("*").eq("email", user.email).in("word", wordIds);
       const srsData = srsRaw || [];
 
       const valid = (wordData || []).filter((w) => w.definitions?.[0]?.definition);
@@ -154,6 +155,10 @@ export default function SRSReview() {
       }
 
       setPhase("setup");
+      } catch (err) {
+        showToast("Failed to load review session. Please try again.");
+        setPhase("empty");
+      }
     })();
   }, [user, source, collectionId]);
 
@@ -177,31 +182,33 @@ export default function SRSReview() {
   const handleKnow = useCallback(async () => {
     if (!flipped || !card) return;
     const updates = calcNext(srsMap[card.word] || {}, true);
-    supabase.from("SRSCards").upsert(
+    const { error } = await supabase.from("SRSCards").upsert(
       { email: user.email, word: card.word, ...updates },
       { onConflict: "email,word" }
     );
+    if (error) showToast("Progress may not have saved. Check your connection.");
     setSrsMap((prev) => ({ ...prev, [card.word]: { ...(prev[card.word] || {}), ...updates } }));
     setKnown((prev) => [...prev, card.word]);
     const next = current + 1;
     if (next >= deck.length) setPhase("results");
     else { setCurrent(next); setFlipped(false); }
-  }, [flipped, card, srsMap, current, deck.length, user]);
+  }, [flipped, card, srsMap, current, deck.length, user, showToast]);
 
   // ── Again ───────────────────────────────────────────────────
   const handleLearning = useCallback(async () => {
     if (!flipped || !card) return;
     const updates = calcNext(srsMap[card.word] || {}, false);
-    supabase.from("SRSCards").upsert(
+    const { error } = await supabase.from("SRSCards").upsert(
       { email: user.email, word: card.word, ...updates },
       { onConflict: "email,word" }
     );
+    if (error) showToast("Progress may not have saved. Check your connection.");
     setSrsMap((prev) => ({ ...prev, [card.word]: { ...(prev[card.word] || {}), ...updates } }));
     setLearning((prev) => [...prev, card.word]);
     const next = current + 1;
     if (next >= deck.length) setPhase("results");
     else { setCurrent(next); setFlipped(false); }
-  }, [flipped, card, srsMap, current, deck.length, user]);
+  }, [flipped, card, srsMap, current, deck.length, user, showToast]);
 
   const handleFlip = useCallback(() => {
     if (!flipped) setFlipped(true);

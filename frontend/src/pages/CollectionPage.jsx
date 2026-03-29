@@ -5,14 +5,17 @@ import { useAuth } from "../context/AuthContext.jsx";
 import { TbArrowLeft, TbTrash, TbX, TbPencil, TbCheck, TbCards, TbBrain } from "react-icons/tb";
 import Loader from "../components/Loader.jsx";
 import Lexicaldata from "../components/Lexicaldata.jsx";
+import { useToast } from "../context/ToastContext.jsx";
 
 function CollectionPage() {
   const { id } = useParams();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { showToast } = useToast();
   const [collection, setCollection] = useState(null);
   const [words, setWords] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [removingIds, setRemovingIds] = useState([]);
   const [sortBy, setSortBy] = useState("recent");
   const [editing, setEditing] = useState(false);
@@ -24,56 +27,48 @@ function CollectionPage() {
     if (!user) return;
 
     const fetchData = async () => {
-      const [{ data: col }, { data: colWords }] = await Promise.all([
-        supabase
-          .from("Collections")
-          .select("*")
-          .eq("id", id)
-          .eq("email", user.email)
-          .single(),
-        supabase
-          .from("CollectionWords")
-          .select("word, created_at")
-          .eq("collection_id", id)
-          .eq("email", user.email)
-          .order("created_at", { ascending: false }),
-      ]);
+      try {
+        const [{ data: col, error: colErr }, { data: colWords, error: cwErr }] = await Promise.all([
+          supabase.from("Collections").select("*").eq("id", id).eq("email", user.email).single(),
+          supabase.from("CollectionWords").select("word, created_at").eq("collection_id", id).eq("email", user.email).order("created_at", { ascending: false }),
+        ]);
 
-      if (!col) { navigate("/collections"); return; }
-      setCollection(col);
+        if (colErr || !col) { navigate("/collections"); return; }
+        if (cwErr) throw cwErr;
+        setCollection(col);
 
-      if (colWords?.length > 0) {
-        const wordIds = colWords.map((w) => w.word);
-        const { data: wordDetails } = await supabase
-          .from("Words")
-          .select("*")
-          .in("word", wordIds);
-
-        const merged = colWords.map((cw) => ({
-          ...(wordDetails?.find((w) => w.word === cw.word) || { word: cw.word }),
-          added_at: cw.created_at,
-        }));
-        setWords(merged);
+        if (colWords?.length > 0) {
+          const wordIds = colWords.map((w) => w.word);
+          const { data: wordDetails, error: wErr } = await supabase.from("Words").select("*").in("word", wordIds);
+          if (wErr) throw wErr;
+          const merged = colWords.map((cw) => ({
+            ...(wordDetails?.find((w) => w.word === cw.word) || { word: cw.word }),
+            added_at: cw.created_at,
+          }));
+          setWords(merged);
+        }
+      } catch (err) {
+        setError("Failed to load collection. Please refresh.");
+      } finally {
+        setLoading(false);
       }
-
-      setLoading(false);
     };
 
     fetchData();
   }, [user, id]);
 
   const removeWord = async (word) => {
+    const removed = words.find((w) => w.word === word);
     setRemovingIds((prev) => [...prev, word]);
     setTimeout(() => {
       setWords((prev) => prev.filter((w) => w.word !== word));
       setRemovingIds((prev) => prev.filter((i) => i !== word));
     }, 300);
-    await supabase
-      .from("CollectionWords")
-      .delete()
-      .eq("collection_id", id)
-      .eq("word", word)
-      .eq("email", user.email);
+    const { error } = await supabase.from("CollectionWords").delete().eq("collection_id", id).eq("word", word).eq("email", user.email);
+    if (error) {
+      if (removed) setWords((prev) => [...prev, removed]);
+      showToast("Failed to remove word. Try again.");
+    }
   };
 
   const startEditing = () => {
@@ -84,19 +79,19 @@ function CollectionPage() {
 
   const saveEdit = async () => {
     if (!editName.trim()) return;
-    const { error } = await supabase
-      .from("Collections")
-      .update({ name: editName.trim(), description: editDesc.trim() || null })
-      .eq("id", id);
+    const { error } = await supabase.from("Collections").update({ name: editName.trim(), description: editDesc.trim() || null }).eq("id", id);
     if (!error) {
       setCollection((prev) => ({ ...prev, name: editName.trim(), description: editDesc.trim() || null }));
       setEditing(false);
+    } else {
+      showToast("Failed to save changes. Try again.");
     }
   };
 
   const deleteCollection = async () => {
-    await supabase.from("CollectionWords").delete().eq("collection_id", id).eq("email", user.email);
-    await supabase.from("Collections").delete().eq("id", id).eq("email", user.email);
+    const { error: e1 } = await supabase.from("CollectionWords").delete().eq("collection_id", id).eq("email", user.email);
+    const { error: e2 } = await supabase.from("Collections").delete().eq("id", id).eq("email", user.email);
+    if (e1 || e2) { showToast("Failed to delete collection. Try again."); return; }
     navigate("/collections");
   };
 
@@ -111,6 +106,7 @@ function CollectionPage() {
   });
 
   if (loading) return <Loader />;
+  if (error) return <div className="fc-empty"><p>{error}</p></div>;
 
   return (
     <div className="collections-main-container">

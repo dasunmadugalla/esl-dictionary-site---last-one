@@ -4,6 +4,7 @@ import { supabase } from "../lib/supabase";
 import { useAuth } from "../context/AuthContext.jsx";
 import { TbArrowLeft, TbCheck, TbRefresh, TbX, TbCards } from "react-icons/tb";
 import Loader from "../components/Loader.jsx";
+import { useToast } from "../context/ToastContext.jsx";
 import "../styles/flashcards.css";
 
 function shuffle(arr) {
@@ -18,6 +19,7 @@ function shuffle(arr) {
 export default function Flashcards() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { showToast } = useToast();
   const [params] = useSearchParams();
   const source = params.get("source");
   const collectionId = params.get("id");
@@ -37,35 +39,39 @@ export default function Flashcards() {
   useEffect(() => {
     if (!user) return;
     (async () => {
-      let wordIds = [];
+      try {
+        let wordIds = [];
 
-      if (source === "bookmarks") {
-        setTitle("Bookmarks");
-        const { data } = await supabase
-          .from("Bookmarks").select("wordIDs").eq("email", user.email);
-        wordIds = (data || []).map((b) => b.wordIDs);
-      } else if (source === "collection" && collectionId) {
-        const [{ data: col }, { data: cw }] = await Promise.all([
-          supabase.from("Collections").select("name").eq("id", collectionId).single(),
-          supabase.from("CollectionWords").select("word")
-            .eq("collection_id", collectionId).eq("email", user.email),
-        ]);
-        setTitle(col?.name || "Collection");
-        wordIds = (cw || []).map((r) => r.word);
+        if (source === "bookmarks") {
+          setTitle("Bookmarks");
+          const { data, error } = await supabase.from("Bookmarks").select("wordIDs").eq("email", user.email);
+          if (error) throw error;
+          wordIds = (data || []).map((b) => b.wordIDs);
+        } else if (source === "collection" && collectionId) {
+          const [{ data: col, error: e1 }, { data: cw, error: e2 }] = await Promise.all([
+            supabase.from("Collections").select("name").eq("id", collectionId).single(),
+            supabase.from("CollectionWords").select("word").eq("collection_id", collectionId).eq("email", user.email),
+          ]);
+          if (e1 || e2) throw e1 || e2;
+          setTitle(col?.name || "Collection");
+          wordIds = (cw || []).map((r) => r.word);
+        }
+
+        if (wordIds.length === 0) { setPhase("empty"); return; }
+
+        const { data: wordData, error: wErr } = await supabase
+          .from("Words").select("word, definitions, frequency, complexity, register").in("word", wordIds);
+        if (wErr) throw wErr;
+
+        const valid = (wordData || []).filter((w) => w.definitions?.[0]?.definition);
+        if (valid.length === 0) { setPhase("empty"); return; }
+
+        setAllWords(valid);
+        setPhase("setup");
+      } catch (err) {
+        showToast("Failed to load flashcards. Please try again.");
+        setPhase("empty");
       }
-
-      if (wordIds.length === 0) { setPhase("empty"); return; }
-
-      const { data: wordData } = await supabase
-        .from("Words")
-        .select("word, definitions, frequency, complexity, register")
-        .in("word", wordIds);
-
-      const valid = (wordData || []).filter((w) => w.definitions?.[0]?.definition);
-      if (valid.length === 0) { setPhase("empty"); return; }
-
-      setAllWords(valid);
-      setPhase("setup");
     })();
   }, [user, source, collectionId]);
 
