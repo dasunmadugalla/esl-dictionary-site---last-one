@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import "../styles/policy.css";
 
 const SITE_NAME = "[SITE NAME]";
@@ -16,6 +17,14 @@ function Section({ title, children }) {
 }
 
 function Policy() {
+  const { hash } = useLocation();
+
+  useEffect(() => {
+    if (!hash) return;
+    const el = document.querySelector(hash);
+    if (el) el.scrollIntoView({ behavior: "smooth" });
+  }, [hash]);
+
   return (
     <div className="policy-main">
       <div className="policy-wrapper">
@@ -180,7 +189,7 @@ function Policy() {
         </div>
 
         {/* ── TERMS OF SERVICE ──────────────────────────────────── */}
-        <div className="policy-block">
+        <div id="terms" className="policy-block">
           <h2 className="policy-block-title">Terms of Service</h2>
 
           <Section title="1. Acceptance">
