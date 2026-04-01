@@ -53,8 +53,8 @@ function Searchbar({ externalInputRef } = {}) {
       return;
     }
 
-    // Navigate to word page
-    navigate(`/word/${encodeURIComponent(normalizeWord(value))}`);
+    // Navigate to word page — flag so Search_result knows it came from a search
+    navigate(`/word/${encodeURIComponent(normalizeWord(value))}`, { state: { fromSearch: true } });
 
     // Record search in backend if logged in
     if (user?.email) {
@@ -65,6 +65,7 @@ function Searchbar({ externalInputRef } = {}) {
           body: JSON.stringify({
             email: user.email,
             word: normalizeWord(value),
+            type: "search",
           }),
         });
         const data = await res.json();

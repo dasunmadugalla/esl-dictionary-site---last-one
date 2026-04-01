@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../context/AuthContext.jsx";
-import { TbExternalLink, TbSearch } from "react-icons/tb";
+import { TbExternalLink, TbSearch, TbEye } from "react-icons/tb";
 import Loader from "../components/Loader.jsx";
 import "../styles/searchHistory.css";
 
@@ -46,40 +46,59 @@ function formatTime(iso) {
 export default function SearchHistory() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState("searches");
   const [loading, setLoading] = useState(true);
-  const [groups, setGroups] = useState([]);
-  const [total, setTotal] = useState(0);
+  const [allData, setAllData] = useState([]);
 
   useEffect(() => {
     if (!user) return;
     (async () => {
       const { data } = await supabase
         .from("searches")
-        .select("word, created_at")
+        .select("word, created_at, type")
         .eq("email", user.email)
         .order("created_at", { ascending: false });
 
-      if (data) {
-        setTotal(data.length);
-        setGroups(groupByDate(data));
-      }
+      setAllData(data || []);
       setLoading(false);
     })();
   }, [user]);
 
   if (loading) return <Loader />;
 
+  const filtered = activeTab === "searches"
+    ? allData.filter((r) => r.type === "search" || !r.type)
+    : allData;
+
+  const groups = groupByDate(filtered);
+  const total = filtered.length;
+
   return (
     <div className="sh-container">
       <div className="sh-header">
-        <h1 className="sh-title">Search History</h1>
-        <p className="sh-subtitle">{total} searches total</p>
+        <h1 className="sh-title">History</h1>
+        <p className="sh-subtitle">{total} {activeTab === "searches" ? "searches" : "entries"} total</p>
+      </div>
+
+      <div className="sh-tabs">
+        <button
+          className={`sh-tab${activeTab === "searches" ? " sh-tab--active" : ""}`}
+          onClick={() => setActiveTab("searches")}
+        >
+          <TbSearch /> Searches
+        </button>
+        <button
+          className={`sh-tab${activeTab === "all" ? " sh-tab--active" : ""}`}
+          onClick={() => setActiveTab("all")}
+        >
+          <TbEye /> All History
+        </button>
       </div>
 
       {groups.length === 0 ? (
         <div className="sh-empty">
           <TbSearch className="sh-empty-icon" />
-          <p>No searches yet. Start exploring words!</p>
+          <p>{activeTab === "searches" ? "No searches yet. Start exploring words!" : "No history yet."}</p>
         </div>
       ) : (
         <div className="sh-groups">
@@ -91,11 +110,16 @@ export default function SearchHistory() {
                   <div
                     key={i}
                     className="sh-item"
-                    onClick={() =>
-                      navigate(`/word/${encodeURIComponent(item.word)}`)
-                    }
+                    onClick={() => navigate(`/word/${encodeURIComponent(item.word)}`)}
                   >
-                    <span className="sh-word">{item.word}</span>
+                    <div className="sh-item-left">
+                      {activeTab === "all" && (
+                        <span className={`sh-type-badge sh-type-badge--${item.type === "view" ? "view" : "search"}`}>
+                          {item.type === "view" ? <TbEye /> : <TbSearch />}
+                        </span>
+                      )}
+                      <span className="sh-word">{item.word}</span>
+                    </div>
                     <div className="sh-item-right">
                       <span className="sh-time">{formatTime(item.created_at)}</span>
                       <TbExternalLink className="sh-link-icon" />

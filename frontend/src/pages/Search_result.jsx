@@ -1,5 +1,5 @@
-import React, { useContext } from "react";
-import { useParams } from "react-router-dom";
+import React, { useContext, useEffect } from "react";
+import { useParams, useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import Word_container from "../components/Word_container";
 import { supabase } from "../lib/supabase";
@@ -7,10 +7,23 @@ import { IPContext } from "../context/IPContext";
 import Recently_viewed from "../components/Recently_viewed";
 import WordSkeleton from "../components/WordSkeleton";
 import Searchbar from "../components/Searchbar";
+import { useAuth } from "../context/AuthContext";
 
 function Search_result() {
   const { ip } = useContext(IPContext);
   const { search } = useParams();
+  const location = useLocation();
+  const { user } = useAuth();
+
+  // Track word views (clicks) — only when not arriving from the searchbar
+  useEffect(() => {
+    if (!user?.email || !search || !ip || location.state?.fromSearch) return;
+    fetch(`${ip}/search/add-search`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: user.email, word: search, type: "view" }),
+    }).catch(() => {});
+  }, [search, ip, user, location.state?.fromSearch]);
 
   const { data: searchResult, isLoading, error } = useQuery({
     queryKey: ["word", search],

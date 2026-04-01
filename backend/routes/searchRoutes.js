@@ -5,7 +5,7 @@ import { supabase } from "../supabase.js";
 const router = express.Router();
 
 router.post("/add-search", async (req, res) => {
-  const { email, word } = req.body;
+  const { email, word, type = "search" } = req.body;
 
   if (!email || !word) {
     return res.status(400).json({ error: "Email and word are required" });
@@ -14,7 +14,7 @@ router.post("/add-search", async (req, res) => {
   try {
     const { data, error } = await supabase
       .from("searches")
-      .insert([{ email, word }])
+      .insert([{ email, word, type }])
       .select();
 
     if (error) throw error;

@@ -27,6 +27,43 @@
   font-weight: 500;
 }
 
+/* ── Tabs ─────────────────────────────────────────────────── */
+.sh-tabs {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.sh-tab {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1.1rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-3);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.12s, color 0.12s, border-color 0.12s;
+}
+
+.sh-tab:hover {
+  background: var(--bg-hover);
+  color: var(--text-1);
+}
+
+.sh-tab--active {
+  background: var(--text-1);
+  color: var(--bg-primary);
+  border-color: var(--text-1);
+}
+
+.sh-tab--active:hover {
+  background: var(--text-1);
+  color: var(--bg-primary);
+}
+
 /* ── Empty state ──────────────────────────────────────────── */
 .sh-empty {
   display: flex;
@@ -95,6 +132,27 @@
 
 .sh-item:hover {
   background-color: var(--bg-hover);
+}
+
+.sh-item-left {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.sh-type-badge {
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.sh-type-badge--search {
+  color: var(--text-3);
+}
+
+.sh-type-badge--view {
+  color: var(--text-muted);
 }
 
 .sh-word {
