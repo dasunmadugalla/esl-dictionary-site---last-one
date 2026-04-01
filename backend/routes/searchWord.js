@@ -100,7 +100,7 @@ router.get("/:search", optionalAuth, async (req, res) => {
       // deterministic responses
       temperature: 0,
       top_p: 1,
-      max_tokens: 1200,
+      max_tokens: 3000,
 
       response_format: { type: "json_object" },
 
@@ -108,7 +108,8 @@ router.get("/:search", optionalAuth, async (req, res) => {
         {
           role: "system",
           content: `
-You are an ESL dictionary API.
+You are a friendly ESL dictionary assistant. You explain words like a caring teacher
+talking to a 10-year-old student who just moved to an English-speaking country.
 
 Rules:
 - Always return ONLY a valid JSON object.
@@ -116,7 +117,10 @@ Rules:
 - Always follow the exact schema given by the user.
 - If data does not exist use "" or [] (never null).
 - Each meaning MUST have exactly 3 example sentences.
-- Definitions must be understandable by a 10-year-old ESL learner.
+- Write definitions in plain, everyday English — never formal dictionary language.
+- Never use the word itself inside its own definition.
+- Never use a harder word than the word being defined.
+- Maximum 2 short sentences per definition.
 `,
         },
         {
@@ -127,12 +131,30 @@ Generate dictionary data for the word "${wordParam}".
 Follow these rules strictly:
 
 1. Provide ALL common meanings of the word.
-2. Definitions must be simple engough for a 10 yr old to understand a very hard word, descriptive, explaining and clear but still accurate.
+2. Definitions must follow these strict rules:
+   - Write like a friendly teacher explaining to a 10-year-old ESL student.
+   - Never use the word itself or any harder word inside the definition.
+   - Maximum 2 short sentences. No formal dictionary phrasing.
+   - BAD: "To proceed or travel at a rapid pace on foot."
+   - GOOD: "To move your legs very fast, faster than walking. People run when they are late or playing a sport."
+   - BAD: "The state of being uncertain or unclear about something."
+   - GOOD: "When you are not sure about something and you need more information to decide. It feels like you have two answers but don't know which one is right."
 3. Each meaning must contain EXACTLY 3 example sentences that clearly demonstrate that specific meaning.
 4. Synonyms and antonyms should be relevant to that meaning.
 5. If none exist, return an empty array [].
 6. Frequency must be one of: essential (must-know, used constantly), common (everyday words, most people know), intermediate (used in books and news), advanced (formal and academic writing), rare (exists but barely used)
-7.if the requested word is a scientific or a technicle term provide the '100% accurate textbook definiton' for technical_definition if it doesn't leave that empty. for this feld forget about being simple and using easy words. no explanations needed here but only the real text book definiton
+7. technical_definition should ONLY be filled for words that have a strict, established 
+   definition in a specific academic or scientific field — such as scientific terms 
+   (photosynthesis, osmosis, entropy), mathematical terms (integer, asymptote), 
+   medical terms (hypertension, neuron), legal terms (plaintiff, jurisdiction), or 
+   programming terms (recursion, algorithm).
+   
+   Do NOT fill this for everyday words, objects, or general vocabulary — even if they 
+   can be described technically. Examples of words that should have EMPTY 
+   technical_definition: car, house, run, break, beautiful, fast.
+   
+   If the word does not belong to a specific academic discipline, leave both fields as "".
+
 8. Word complexity MUST follow this CEFR rule:
 
 A1 → extremely common everyday words  
@@ -144,7 +166,7 @@ C2 → highly rare or specialized words
 
 Choose the most appropriate level and be consistent.
 
-9. synonyms and antonyms should be strictly text book synonyms and antonyms which are 100% correct.if there is no textbook synonyms, antonyms or any related words to that perticular word leave those feilds empty
+9. Synonyms and antonyms should be strictly textbook synonyms and antonyms which are 100% correct. If there are no textbook synonyms, antonyms or any related words to that particular word leave those fields empty.
 10. For word_family, provide the other grammatical forms of the word (noun, verb, adjective, adverb). Only include forms that genuinely exist. Use "" for any form that does not exist. Example: for "beautiful" → noun: "beauty", verb: "beautify", adjective: "beautiful", adverb: "beautifully". For a word like "the" that has no other forms, all fields should be "".
 11. register must be exactly one of: formal, informal, slang, academic, neutral, literary — pick the single most accurate one for how this word is typically used.
 12. memory_tip: a single vivid one-liner that helps an ESL learner remember the word. Use a comparison, analogy, or image. Maximum 20 words. Example: "Think of 'ephemeral' like a soap bubble — beautiful but gone in seconds."
@@ -152,7 +174,7 @@ Choose the most appropriate level and be consistent.
 
 Return JSON in this exact format (DO NOT change the structure):
 
-{["example sentence using the word.","example sentence using the word","example sentence using the word"]
+{
   "word": "dictionary",
   "phonetic": "/ˈdɪkʃəˌnɛri/",
   "syllables": "Dic-tion-ar-y",
@@ -161,34 +183,34 @@ Return JSON in this exact format (DO NOT change the structure):
   "register": "neutral",
   "memory_tip": "Think of a dictionary as a word map — it tells you where every word lives and what it means.",
   "real_world_context": "You'd use a dictionary when you read a word you don't know in a book or article.",
-"technical_definition": {
-  "subject": "",
-  "definition": ""
-},
+  "technical_definition": {
+    "subject": "",
+    "definition": ""
+  },
   "word_family": {
     "noun": "dictionary",
     "verb": "",
     "adjective": "",
     "adverb": ""
   },
-  "related_words": ["word1","word2"],
+  "related_words": ["word1", "word2"],
   "meanings": [
     {
       "part_of_speech": "noun",
-      "definition": "A book or digital resource listing words and their meanings.",
+      "definition": "A book or app where you can look up any word to find out what it means and how to use it.",
       "example": [
-      {
-      sentence: "example sentence using the word.",
-      sentence_explantion : "explain the sentence how the word is using here simply to better understanding"
-      },
-      {
-      sentence: "example sentence using the word.",
-      sentence_explantion : "explain the sentence how the word is using here simply to better understanding"
-      },
-      {
-      sentence: "example sentence using the word.",
-      sentence_explantion : "explain the sentence how the word is using here simply to better understanding"
-      }
+        {
+          "sentence": "She looked up the word in her dictionary.",
+          "sentence_explanation": "Here the word means she used a dictionary to find out what a word means."
+        },
+        {
+          "sentence": "My teacher told me to use a dictionary when I don't understand a word.",
+          "sentence_explanation": "Here the word means a tool you use to learn about words you don't know."
+        },
+        {
+          "sentence": "He downloaded a dictionary app on his phone.",
+          "sentence_explanation": "Here the word means a digital app that works like a book of word meanings."
+        }
       ],
       "synonyms": ["lexicon", "wordbook", "glossary"],
       "antonyms": []

@@ -1,158 +1,202 @@
 /* ══════════════════════════════════════════════════════════════
-   Word Snippet — Signature Dictionary Card
-   Fixed warm-ink palette. Identical in light & dark mode.
-   Think: aged leather journal, not a game UI.
+   Word Snippet Card  —  Business-card inspired premium design
+   Dark background · Geometric circle overlays · Clean type
    ══════════════════════════════════════════════════════════════ */
 
 .ws-wrapper {
-  padding: 1.75rem;
-  background: transparent;
   display: inline-block;
+  padding: 2rem;
+  background: transparent;
 }
 
+/* ── Card shell ─────────────────────────────────────────────── */
 .ws-card {
   position: relative;
   width: 560px;
-  background: #0f0d09;
-  border-radius: 18px;
+  background: #0d0d18;
+  border-radius: 20px;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
   box-shadow:
-    0 0 0 1px rgba(255, 220, 140, 0.07),
-    0 2px 0 rgba(255, 220, 140, 0.04),
-    0 24px 64px rgba(0, 0, 0, 0.75);
+    0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 32px 80px rgba(0, 0, 0, 0.8);
 }
 
-/* ── Warm amber accent stripe ──────────────────────────────── */
-.ws-accent-stripe {
-  width: 100%;
-  height: 3.5px;
-  background: linear-gradient(90deg, #92400e 0%, #d97706 45%, #fbbf24 100%);
-  flex-shrink: 0;
-}
-
-/* ── Faint watermark letter ────────────────────────────────── */
-.ws-watermark {
+/* ── Decorative circles (top-right corner) ──────────────────── */
+.ws-deco {
   position: absolute;
-  bottom: -2rem;
-  right: 0.25rem;
-  font-size: 13rem;
-  font-weight: 900;
-  line-height: 1;
-  text-transform: uppercase;
-  letter-spacing: -0.06em;
-  color: rgba(255, 220, 140, 0.03);
+  top: -80px;
+  right: -80px;
   pointer-events: none;
   user-select: none;
 }
 
-/* ── Body ──────────────────────────────────────────────────── */
-.ws-body {
-  padding: 1.625rem 1.875rem 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.875rem;
+.ws-circle {
+  position: absolute;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.07);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
-/* ── Word + POS ────────────────────────────────────────────── */
-.ws-top {
+.ws-circle--1 {
+  width: 200px;
+  height: 200px;
+}
+
+.ws-circle--2 {
+  width: 310px;
+  height: 310px;
+  border-color: rgba(255, 255, 255, 0.04);
+}
+
+.ws-circle--3 {
+  width: 420px;
+  height: 420px;
+  border-color: rgba(255, 255, 255, 0.025);
+}
+
+/* ── Header ─────────────────────────────────────────────────── */
+.ws-header {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  padding: 1.375rem 1.75rem 0;
+  position: relative;
+  z-index: 1;
 }
 
-.ws-word {
-  font-size: 2.5rem;
-  font-weight: 800;
-  color: #fffbf3;
-  line-height: 1.05;
-  text-transform: capitalize;
-  letter-spacing: -0.04em;
+.ws-brand {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: rgba(255, 255, 255, 0.35);
+  text-transform: uppercase;
+  font-style: normal;
 }
 
 .ws-pos {
-  flex-shrink: 0;
-  margin-top: 0.6rem;
-  font-size: 10px;
+  font-size: 10.5px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 1.3px;
-  color: #d97706;
-  background: rgba(217, 119, 6, 0.1);
-  border: 1px solid rgba(217, 119, 6, 0.22);
+  letter-spacing: 1.2px;
+  color: #a78bfa;
+  background: rgba(167, 139, 250, 0.1);
+  border: 1px solid rgba(167, 139, 250, 0.2);
   border-radius: 999px;
-  padding: 3px 11px;
+  padding: 3px 12px;
 }
 
-/* ── Divider ───────────────────────────────────────────────── */
-.ws-divider {
-  height: 1px;
-  background: rgba(255, 220, 140, 0.08);
+/* ── Body ───────────────────────────────────────────────────── */
+.ws-body {
+  padding: 1.125rem 1.75rem 1.375rem;
+  display: flex;
+  flex-direction: column;
+  gap: .875rem;
+  position: relative;
+  z-index: 1;
+  flex: 1;
 }
 
-/* ── Definition ────────────────────────────────────────────── */
-.ws-definition {
-  font-size: 1.0rem;
-  line-height: 1.72;
-  color: rgba(255, 248, 230, 0.72);
-  font-weight: 400;
+/* ── Word ───────────────────────────────────────────────────── */
+.ws-word {
+  font-size: 3rem;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1;
+  letter-spacing: -0.05em;
   text-transform: capitalize;
 }
 
-/* ── Example sentence ──────────────────────────────────────── */
-.ws-example {
-  font-size: 0.88rem;
-  line-height: 1.6;
-  font-style: italic;
-  color: rgba(255, 248, 230, 0.38);
-  padding-left: 0.875rem;
-  border-left: 2.5px solid rgba(217, 119, 6, 0.35);
-  margin-top: -0.125rem;
-}
-
-/* ── Footer ────────────────────────────────────────────────── */
-.ws-footer {
+/* ── Phonetic + syllables ───────────────────────────────────── */
+.ws-sub {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 0.4rem 0.6rem;
-  padding-top: 0.625rem;
-  border-top: 1px solid rgba(255, 220, 140, 0.07);
+  gap: .75rem;
+  margin-top: -.375rem;
 }
 
 .ws-phonetic {
-  font-size: 13px;
-  font-weight: 600;
-  color: #fbbf24;
-  letter-spacing: 0.3px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #a78bfa;
+  letter-spacing: 0.2px;
 }
 
 .ws-syllables {
-  font-size: 11.5px;
+  font-size: 12px;
   font-weight: 500;
-  color: rgba(255, 248, 230, 0.25);
-  letter-spacing: 2.5px;
+  color: rgba(255, 255, 255, 0.2);
+  letter-spacing: 3px;
 }
 
-/* push badges to the right */
-.ws-footer-spacer { flex: 1; }
+/* ── Divider ────────────────────────────────────────────────── */
+.ws-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+/* ── Definition ─────────────────────────────────────────────── */
+.ws-definition {
+  font-size: 15px;
+  line-height: 1.75;
+  color: rgba(255, 255, 255, 0.65);
+  font-weight: 400;
+}
+
+/* ── Example sentence ───────────────────────────────────────── */
+.ws-example {
+  font-size: 13px;
+  line-height: 1.65;
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.3);
+  padding-left: .875rem;
+  border-left: 2px solid rgba(167, 139, 250, 0.3);
+}
+
+/* ── Footer ─────────────────────────────────────────────────── */
+.ws-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: .875rem 1.75rem 1.25rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  position: relative;
+  z-index: 1;
+}
+
+.ws-footer-badges {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+}
 
 .ws-badge {
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 600;
   text-transform: capitalize;
+  letter-spacing: 0.2px;
   border-radius: 999px;
   padding: 3px 11px;
 }
 
 .ws-badge--freq {
-  background: rgba(180, 83, 9, 0.18);
-  color: #fcd34d;
-  border: 1px solid rgba(217, 119, 6, 0.28);
+  background: rgba(167, 139, 250, 0.12);
+  color: #c4b5fd;
+  border: 1px solid rgba(167, 139, 250, 0.2);
 }
 
 .ws-badge--complex {
-  background: rgba(120, 113, 84, 0.2);
-  color: rgba(255, 248, 230, 0.55);
-  border: 1px solid rgba(255, 248, 230, 0.1);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.ws-footer-site {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.18);
+  letter-spacing: 0.3px;
 }

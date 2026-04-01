@@ -238,6 +238,7 @@ span.syllables {
   gap: 0.5rem;
   border-radius: 0.5rem;
   background-color: var(--bg-subtle);
+  background-color: rgba(8, 22, 206, 0.114);
   color: var(--text-1);
 }
 
@@ -323,7 +324,7 @@ p.definition {
 }
 
 .sentence-word-link:hover {
-  color: rgb(0, 85, 255);
+  color: rgb(0, 17, 255);
   border-bottom-color: rgb(0, 85, 255);
 }
 
@@ -811,8 +812,8 @@ p.definition {
 }
 
 [data-theme="dark"] .sentence-word-link:hover {
-  color: #7aadff;
-  border-bottom-color: #7aadff;
+  color: #b485f5;
+  border-bottom-color: #b485f5;
 }
 
 [data-theme="dark"] .lexical-badge {
@@ -822,6 +823,6 @@ p.definition {
 }
 
 [data-theme="dark"] .example-item {
-  background-color: #242424;
+  background-color: #181818;
   border-left-color: #3d3d3d;
 }

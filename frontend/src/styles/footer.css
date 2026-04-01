@@ -1,6 +1,6 @@
 .site-footer {
   width: 100%;
-  border-top: 1px solid var(--border);
+  /* border-top: 1px solid var(--border); */
   padding: 1.5rem;
 }
 
