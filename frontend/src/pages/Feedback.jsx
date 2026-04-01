@@ -4,6 +4,7 @@ import { supabase } from "../lib/supabase";
 import { useAuth } from "../context/AuthContext";
 import {
   TbArrowLeft, TbSend, TbBulb, TbTool, TbBug, TbMessageCircle, TbCheck,
+  TbWorld, TbUsers,
 } from "react-icons/tb";
 import "../styles/feedback.css";
 
@@ -79,7 +80,7 @@ export default function Feedback() {
             {/* ── Community pitch ── */}
             <div className="fbp-community">
               <div className="fbp-community-left">
-                <span className="fbp-globe">🌍</span>
+                <span className="fbp-globe"><TbWorld /></span>
               </div>
               <div className="fbp-community-right">
                 <p className="fbp-community-title">This site grows because of learners like you</p>
@@ -90,9 +91,9 @@ export default function Feedback() {
                   <strong> Your voice matters here.</strong>
                 </p>
                 <div className="fbp-why-list">
-                  <span className="fbp-why-item"><span>💡</span> Your ideas become real features</span>
-                  <span className="fbp-why-item"><span>🐛</span> Your bug reports help every learner after you</span>
-                  <span className="fbp-why-item"><span>🤝</span> Community to community — we build this together</span>
+                  <span className="fbp-why-item"><TbBulb /> Your ideas become real features</span>
+                  <span className="fbp-why-item"><TbBug /> Your bug reports help every learner after you</span>
+                  <span className="fbp-why-item"><TbUsers /> Community to community — we build this together</span>
                 </div>
               </div>
             </div>
