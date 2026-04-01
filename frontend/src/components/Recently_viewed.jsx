@@ -33,16 +33,21 @@ function Recently_viewed() {
     staleTime: 2 * 60 * 1000,
   });
 
+  if (!user) return null;
+
   return (
     <div className="recent-searches-sidebar">
       <h2 className="recent-searches-title">recent searches</h2>
       <ol>
-        {data.map((word, index) => (
+        {data.map((word) => (
           <li key={word} onClick={() => navigate(`/word/${word}`)}>
             {word}
           </li>
         ))}
       </ol>
+      <button className="view-all-history-btn" onClick={() => navigate("/history")}>
+        view all history
+      </button>
     </div>
   );
 }
