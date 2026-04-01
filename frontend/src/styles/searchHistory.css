@@ -55,13 +55,13 @@
 
 .sh-tab--active {
   background: var(--text-1);
-  color: var(--bg-primary);
+  color: var(--bg-card);
   border-color: var(--text-1);
 }
 
 .sh-tab--active:hover {
   background: var(--text-1);
-  color: var(--bg-primary);
+  color: var(--bg-card);
 }
 
 /* ── Empty state ──────────────────────────────────────────── */
