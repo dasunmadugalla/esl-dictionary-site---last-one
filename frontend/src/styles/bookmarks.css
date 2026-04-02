@@ -87,8 +87,8 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 8px;
+  gap: 1em;
+  margin-bottom: 3em;
   flex-wrap: wrap;
 }
 
