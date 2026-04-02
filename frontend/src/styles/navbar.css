@@ -17,6 +17,22 @@
   width: 13.5rem;
 }
 
+/* ── Logo ─────────────────────────────────────────────────── */
+.site-logo {
+  width: 100px;
+  object-fit: contain;
+  opacity: 0;
+  padding: 0 1rem;
+  margin-bottom: 0.5rem;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+  align-self: flex-start;
+}
+
+.navbar:hover .site-logo {
+  opacity: 1;
+}
+
 /* ── Nav lists ────────────────────────────────────────────── */
 .navbar ul {
   display: flex;

@@ -17,7 +17,7 @@ import {
 import { useAuth } from "../context/AuthContext.jsx";
 import { useTheme } from "../context/ThemeContext.jsx";
 import { supabase } from "../lib/supabase";
-import logo from "../assets/logo.svg";
+import logo from "../assets/logo-white.png";
 
 function Navbar({ menuOpen, onClose }) {
   const { user, loading } = useAuth();
@@ -48,7 +48,7 @@ function Navbar({ menuOpen, onClose }) {
         <TbX />
       </button>
 
-      {/* <img src={logo} alt="Dictionary" className="site-logo" /> */}
+      <img src={logo} alt="Grasperr" className="site-logo" />
 
       {/* Section 1 — Discover */}
       <ul>
