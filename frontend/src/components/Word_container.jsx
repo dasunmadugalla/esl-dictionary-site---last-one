@@ -459,8 +459,8 @@ function Word_container({ details: searchResult = {} }) {
                       <p className="ex-sentence">
                         <ClickableSentence text={ex.sentence} />
                       </p>
-                      {ex.sentence_explantion && (
-                        <p className="sentence-explanation"><ClickableSentence text={ex.sentence_explantion} /></p>
+                      {(ex.sentence_explanation || ex.sentence_explantion) && (
+                        <p className="sentence-explanation"><ClickableSentence text={ex.sentence_explanation || ex.sentence_explantion} /></p>
                       )}
                     </li>
                   ))
