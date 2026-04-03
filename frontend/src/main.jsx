@@ -37,8 +37,6 @@ const Dashboard    = lazy(() => import("./pages/Dashboard.jsx"));
 const Collections   = lazy(() => import("./pages/Collections.jsx"));
 const CollectionPage = lazy(() => import("./pages/CollectionPage.jsx"));
 const SearchHistory  = lazy(() => import("./pages/SearchHistory.jsx"));
-const Flashcards     = lazy(() => import("./pages/Flashcards.jsx"));
-const SRSReview      = lazy(() => import("./pages/SRSReview.jsx"));
 const AdminFeedback  = lazy(() => import("./pages/AdminFeedback.jsx"));
 const Feedback       = lazy(() => import("./pages/Feedback.jsx"));
 const About          = lazy(() => import("./pages/About.jsx"));
@@ -59,8 +57,6 @@ const router = createBrowserRouter([
       { path: "/collections/:id", element: <ProtectedRoute><Suspense fallback={<Loader />}><CollectionPage /></Suspense></ProtectedRoute> },
       { path: "/settings", element: <ProtectedRoute><Suspense fallback={<Loader />}><Settings /></Suspense></ProtectedRoute> },
       { path: "/history", element: <ProtectedRoute><Suspense fallback={<Loader />}><SearchHistory /></Suspense></ProtectedRoute> },
-      { path: "/flashcards", element: <ProtectedRoute><Suspense fallback={<Loader />}><Flashcards /></Suspense></ProtectedRoute> },
-      { path: "/review",          element: <ProtectedRoute><Suspense fallback={<Loader />}><SRSReview /></Suspense></ProtectedRoute> },
       { path: "/admin/feedback",  element: <ProtectedRoute><Suspense fallback={<Loader />}><AdminFeedback /></Suspense></ProtectedRoute> },
       { path: "/feedback",        element: <ProtectedRoute><Suspense fallback={<Loader />}><Feedback /></Suspense></ProtectedRoute> },
       { path: "/about",           element: <Suspense fallback={<Loader />}><About /></Suspense> },

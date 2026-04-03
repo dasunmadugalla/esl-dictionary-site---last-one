@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../context/AuthContext.jsx";
 import { useNavigate } from "react-router-dom";
-import { TbStarFilled, TbCards, TbBrain } from "react-icons/tb";
+import { TbStarFilled, TbCards } from "react-icons/tb";
 import Loader from "../components/Loader.jsx";
 import Lexicaldata from "../components/Lexicaldata.jsx";
 import { IPContext } from "../context/IPContext";
@@ -123,12 +123,6 @@ function Bookmarks() {
                     onClick={() => navigate("/flashcards?source=bookmarks")}
                   >
                     <TbCards /> Practice
-                  </button>
-                  <button
-                    className="fc-practice-btn fc-practice-btn--review"
-                    onClick={() => navigate("/review?source=bookmarks")}
-                  >
-                    <TbBrain /> Review
                   </button>
                 </>
               )}

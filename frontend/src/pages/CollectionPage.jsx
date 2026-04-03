@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../context/AuthContext.jsx";
-import { TbArrowLeft, TbTrash, TbX, TbPencil, TbCheck, TbCards, TbBrain } from "react-icons/tb";
+import { TbArrowLeft, TbTrash, TbX, TbPencil, TbCheck, TbCards } from "react-icons/tb";
 import Loader from "../components/Loader.jsx";
 import Lexicaldata from "../components/Lexicaldata.jsx";
 import { useToast } from "../context/ToastContext.jsx";
@@ -127,12 +127,6 @@ function CollectionPage() {
                 onClick={() => navigate(`/flashcards?source=collection&id=${id}`)}
               >
                 <TbCards /> Practice
-              </button>
-              <button
-                className="fc-practice-btn fc-practice-btn--review"
-                onClick={() => navigate(`/review?source=collection&id=${id}`)}
-              >
-                <TbBrain /> Review
               </button>
             </>
           )}
