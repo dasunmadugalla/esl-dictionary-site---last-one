@@ -48,7 +48,6 @@ function Navbar({ menuOpen, onClose }) {
         <TbX />
       </button>
 
-      <img src={logo} alt="Grasperr" className="site-logo" />
 
       {/* Section 1 — Discover */}
       <ul>

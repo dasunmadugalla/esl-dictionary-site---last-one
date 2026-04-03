@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { TbVolume, TbStar, TbShare, TbStarFilled, TbDownload, TbFolderPlus, TbCheck, TbPlus } from "react-icons/tb";
+import { TbVolume, TbStar, TbShare, TbStarFilled, TbDownload, TbFolderPlus, TbCheck, TbPlus, TbBulb, TbHeadphones } from "react-icons/tb";
 import { useAuth } from "../context/AuthContext";
 import { useLocation, Link, useNavigate } from "react-router-dom";
 import Url_snippet from "../components/Url_snippet";
@@ -504,14 +504,14 @@ function Word_container({ details: searchResult = {} }) {
 
         {searchResult.memory_tip && (
           <div className="memory-tip-box">
-            <span className="memory-tip-label">Memory Tip</span>
+            <span className="memory-tip-label"><TbBulb /> Memory Tip</span>
             <p className="memory-tip-text">{searchResult.memory_tip}</p>
           </div>
         )}
 
         {searchResult.real_world_context && (
           <div className="real-world-box">
-            <span className="real-world-label">Where you'd hear this</span>
+            <span className="real-world-label"><TbHeadphones /> Where you'd hear this</span>
             <p className="real-world-text">{searchResult.real_world_context}</p>
           </div>
         )}

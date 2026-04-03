@@ -429,11 +429,18 @@ p.definition {
 }
 
 .memory-tip-label {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
   font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.4px;
   color: #b08800;
+}
+
+.memory-tip-label svg {
+  font-size: 20px;
 }
 
 .memory-tip-text {
@@ -457,11 +464,18 @@ p.definition {
 }
 
 .real-world-label {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
   font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.4px;
   color: #2a68a8;
+}
+
+.real-world-label svg {
+  font-size: 20px;
 }
 
 .real-world-text {

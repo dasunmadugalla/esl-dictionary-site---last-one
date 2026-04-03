@@ -19,18 +19,14 @@
 
 /* ── Logo ─────────────────────────────────────────────────── */
 .site-logo {
-  width: 100px;
+  height: 20px;
+  width: auto;
   object-fit: contain;
-  opacity: 0;
-  padding: 0 1rem;
-  margin-bottom: 0.5rem;
-  transition: opacity 0.2s ease;
-  pointer-events: none;
   align-self: flex-start;
-}
-
-.navbar:hover .site-logo {
-  opacity: 1;
+  margin-bottom: 0.5rem;
+  margin-left: 0.85rem;
+  flex-shrink: 0;
+  pointer-events: none;
 }
 
 /* ── Nav lists ────────────────────────────────────────────── */
@@ -164,17 +160,6 @@ hr {
   background-color: #d00;
 }
 
-/* ── Logo ─────────────────────────────────────────────────── */
-.site-logo {
-  display: none;
-  width: 8rem;
-  padding: 0 1rem;
-  margin-bottom: 0.5rem;
-}
-
-.navbar:hover .site-logo {
-  display: block;
-}
 
 /* ── Theme toggle ─────────────────────────────────────────── */
 .nav-theme-btn {
