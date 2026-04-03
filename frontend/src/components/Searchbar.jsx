@@ -1,7 +1,7 @@
 // Searchbar.jsx
 import React, { useContext, useState, useRef } from "react";
 import { FiSearch } from "react-icons/fi";
-import { TbDice5 } from "react-icons/tb";
+import { GiPerspectiveDiceSixFacesFive } from "react-icons/gi";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { IPContext } from "../context/IPContext";
@@ -164,7 +164,7 @@ function Searchbar({ externalInputRef } = {}) {
     </div>
 
     <button className="random-icon-btn" onClick={handleRandom} title="Random word">
-      <TbDice5 />
+      <GiPerspectiveDiceSixFacesFive />
     </button>
     </div>
   );
