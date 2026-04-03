@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../context/AuthContext.jsx";
-import { TbArrowLeft, TbTrash, TbX, TbPencil, TbCheck, TbCards } from "react-icons/tb";
+import { TbArrowLeft, TbTrash, TbX, TbPencil, TbCheck } from "react-icons/tb";
 import Loader from "../components/Loader.jsx";
 import Lexicaldata from "../components/Lexicaldata.jsx";
 import { useToast } from "../context/ToastContext.jsx";
@@ -120,16 +120,6 @@ function CollectionPage() {
             <h1 className="collections-title">{collection?.name}</h1>
             <span className="collections-count">{words.length} words</span>
           </div>
-          {words.length > 0 && (
-            <>
-              <button
-                className="fc-practice-btn"
-                onClick={() => navigate(`/flashcards?source=collection&id=${id}`)}
-              >
-                <TbCards /> Practice
-              </button>
-            </>
-          )}
           <button className="collection-edit-btn" onClick={editing ? saveEdit : startEditing}>
             {editing ? <TbCheck /> : <TbPencil />}
           </button>

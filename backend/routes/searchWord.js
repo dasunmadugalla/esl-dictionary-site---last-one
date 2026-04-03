@@ -86,13 +86,10 @@ router.get("/:search", optionalAuth, async (req, res) => {
         bookmarked: isBookmarked,
       };
 
-      console.log("Returning cached word from DB:", normalized);
-      console.log(resultFromDb);
       return res.json(resultFromDb);
     }
 
     // 2) NOT FOUND → CALL OPENAI (unchanged prompt + behavior)
-    console.log("Word not found in DB — calling OpenAI for:", normalized);
 
     const completion = await client.chat.completions.create({
       model: "gpt-4.1-mini",
@@ -231,8 +228,6 @@ Return JSON in this exact format (DO NOT change the structure):
       console.error("Invalid AI response:", aiResponse);
       return res.status(500).json({ error: "Invalid AI response" });
     }
-    console.log(aiResponse);
-
     // 3) SAVE TO DATABASE (best-effort; we try to persist the parsed result)
     try {
       // normalize stored word to lowercase to avoid duplicates
@@ -267,8 +262,6 @@ Return JSON in this exact format (DO NOT change the structure):
 
       if (insertError) {
         console.error("Supabase insert error:", insertError);
-      } else {
-        console.log("Saved new word to DB:", toInsert.word);
       }
     } catch (dbErr) {
       console.error("Failed saving to DB:", dbErr);

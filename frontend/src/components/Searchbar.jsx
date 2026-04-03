@@ -68,8 +68,7 @@ function Searchbar({ externalInputRef } = {}) {
             type: "search",
           }),
         });
-        const data = await res.json();
-        console.log("Search recorded:", data);
+        await res.json();
       } catch (err) {
         console.error("Failed to record search:", err);
       }

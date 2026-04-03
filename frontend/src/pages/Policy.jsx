@@ -2,9 +2,9 @@ import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import "../styles/policy.css";
 
-const SITE_NAME = "[SITE NAME]";
-const SITE_URL = "[SITE URL]";
-const CONTACT_EMAIL = "[CONTACT EMAIL]";
+const SITE_NAME = "Grasperr";
+const SITE_URL = "grasperr.com";
+const CONTACT_EMAIL = "contact@grasperr.com";
 const LAST_UPDATED = "2025";
 
 function Section({ title, children }) {

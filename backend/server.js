@@ -22,8 +22,6 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS
 
 app.use(cors({
   origin: (origin, callback) => {
-    console.log("CORS origin received:", origin);
-    console.log("Allowed origins:", allowedOrigins);
     if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
     callback(new Error("Not allowed by CORS"));
   },
@@ -48,10 +46,6 @@ app.get("/", (req, res) => {
 });
 
 
-app.get("/test", (req, res) => {
-  console.log(req);
-  res.send(word);
-});
 
 app.listen(PORT, () => {
   console.log("Server is listening on PORT:", PORT);

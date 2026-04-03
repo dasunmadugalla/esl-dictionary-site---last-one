@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../context/AuthContext.jsx";
 import { useNavigate } from "react-router-dom";
-import { TbStarFilled, TbCards } from "react-icons/tb";
+import { TbStarFilled } from "react-icons/tb";
 import Loader from "../components/Loader.jsx";
 import Lexicaldata from "../components/Lexicaldata.jsx";
 import { IPContext } from "../context/IPContext";
@@ -33,7 +33,6 @@ function Bookmarks() {
 
       if (db_error) {
         setError(db_error);
-        console.log(error);
         return;
       }
 
@@ -45,7 +44,6 @@ function Bookmarks() {
         .in("word", wordIDs);
 
       if (wordDB_error) {
-        console.log(wordDB_error);
         return;
       }
 
@@ -116,16 +114,6 @@ function Bookmarks() {
             <div className="bookmarks-header">
               <h2 className="bookmarks-title">Bookmarks</h2>
               <span className="bookmarks-count">{bookmarkData.length}</span>
-              {bookmarkData.length > 0 && (
-                <>
-                  <button
-                    className="fc-practice-btn"
-                    onClick={() => navigate("/flashcards?source=bookmarks")}
-                  >
-                    <TbCards /> Practice
-                  </button>
-                </>
-              )}
             </div>
 
             <div className="bookmark-controls">
