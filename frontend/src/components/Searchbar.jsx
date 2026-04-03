@@ -16,19 +16,22 @@ function Searchbar({ externalInputRef } = {}) {
   const ownInputRef = useRef(null);
   const inputRef = externalInputRef || ownInputRef;
   const [wiggle, setWiggle] = useState(false);
+  const hasClickedRandom = useRef(false);
+  const wiggleTimeout = useRef(null);
 
   useEffect(() => {
-    let timeout;
     const schedule = () => {
-      const delay = Math.random() * 6000 + 4000; // 4–10 seconds
-      timeout = setTimeout(() => {
+      if (hasClickedRandom.current) return;
+      const delay = Math.random() * 6000 + 4000;
+      wiggleTimeout.current = setTimeout(() => {
+        if (hasClickedRandom.current) return;
         setWiggle(true);
         setTimeout(() => setWiggle(false), 600);
         schedule();
       }, delay);
     };
     schedule();
-    return () => clearTimeout(timeout);
+    return () => clearTimeout(wiggleTimeout.current);
   }, []);
 
   // Normalize input
@@ -126,6 +129,9 @@ function Searchbar({ externalInputRef } = {}) {
   };
 
   const handleRandom = async () => {
+    hasClickedRandom.current = true;
+    setWiggle(false);
+    clearTimeout(wiggleTimeout.current);
     try {
       const res = await fetch(`${ip}/random-word`);
       const { word } = await res.json();
