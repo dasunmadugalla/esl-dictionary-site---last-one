@@ -172,7 +172,7 @@ function Auth() {
       <div className="auth-form-panel">
         <div className="auth-inner">
 
-          <Link to="/" className="auth-logo">Lexify</Link>
+          <Link to="/" className="auth-logo">Grasperr</Link>
 
           {/* ════ OTP SCREEN ════ */}
           {otpStep ? (

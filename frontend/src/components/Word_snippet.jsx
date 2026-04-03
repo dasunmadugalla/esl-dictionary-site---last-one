@@ -22,7 +22,7 @@ function Word_snippet({ data }) {
 
         {/* ── Header row ── */}
         <div className="ws-header">
-          <span className="ws-brand">Lexify</span>
+          <span className="ws-brand">Grasperr</span>
           {!techDef && <span className="ws-pos">{pos}</span>}
         </div>
 
@@ -51,7 +51,7 @@ function Word_snippet({ data }) {
             {data.frequency  && <span className="ws-badge ws-badge--freq">{data.frequency}</span>}
             {data.complexity && <span className="ws-badge ws-badge--complex">{data.complexity}</span>}
           </div>
-          <span className="ws-footer-site">lexify.com</span>
+          <span className="ws-footer-site">grasperr.com</span>
         </div>
 
       </div>

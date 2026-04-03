@@ -2,18 +2,31 @@ import express from "express";
 import { optionalAuth } from "../middleware/authMiddleware.js";
 import OpenAI from "openai";
 import { supabase } from "../supabase.js";
+import rateLimit from "express-rate-limit";
 
 const router = express.Router();
+
+const wordLookupLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 60,                   // 60 lookups per IP per hour
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Too many requests. Please try again later." },
+});
 const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-router.get("/:search", optionalAuth, async (req, res) => {
+router.get("/:search", wordLookupLimiter, optionalAuth, async (req, res) => {
   const raw = req.params.search;
   const wordParam = typeof raw === "string" ? raw.trim() : raw;
 
   if (!wordParam) {
     return res.status(400).json({ error: "Word is required" });
+  }
+
+  if (wordParam.length > 60) {
+    return res.status(400).json({ error: "Word is too long" });
   }
 
   // normalize for DB lookup (avoid duplicates like "Run" vs "run")

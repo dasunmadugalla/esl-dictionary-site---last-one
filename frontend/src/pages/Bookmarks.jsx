@@ -75,10 +75,12 @@ function Bookmarks() {
     }, 300);
 
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token;
       const res = await fetch(`${ip}/bookmark`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: user.email, wordID: wordID }),
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ wordID }),
       });
       if (!res.ok) throw new Error("Failed");
     } catch (err) {

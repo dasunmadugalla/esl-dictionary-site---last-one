@@ -1,10 +1,11 @@
 // Searchbar.jsx
-import React, { useContext, useState, useRef } from "react";
+import React, { useContext, useState, useRef, useEffect } from "react";
 import { FiSearch } from "react-icons/fi";
 import { LuShuffle } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { IPContext } from "../context/IPContext";
+import { supabase } from "../lib/supabase";
 function Searchbar({ externalInputRef } = {}) {
   const [search_value, setSearch_value] = useState("");
   const [suggestions, setSuggestions] = useState([]);
@@ -14,6 +15,21 @@ function Searchbar({ externalInputRef } = {}) {
   const { ip } = useContext(IPContext);
   const ownInputRef = useRef(null);
   const inputRef = externalInputRef || ownInputRef;
+  const [wiggle, setWiggle] = useState(false);
+
+  useEffect(() => {
+    let timeout;
+    const schedule = () => {
+      const delay = Math.random() * 6000 + 4000; // 4–10 seconds
+      timeout = setTimeout(() => {
+        setWiggle(true);
+        setTimeout(() => setWiggle(false), 600);
+        schedule();
+      }, delay);
+    };
+    schedule();
+    return () => clearTimeout(timeout);
+  }, []);
 
   // Normalize input
   const normalizeWord = (word) =>
@@ -59,16 +75,13 @@ function Searchbar({ externalInputRef } = {}) {
     // Record search in backend if logged in
     if (user?.email) {
       try {
-        const res = await fetch(`${ip}/search/add-search`, {
+        const { data: { session } } = await supabase.auth.getSession();
+        const token = session?.access_token;
+        await fetch(`${ip}/search/add-search`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email: user.email,
-            word: normalizeWord(value),
-            type: "search",
-          }),
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ word: normalizeWord(value), type: "search" }),
         });
-        await res.json();
       } catch (err) {
         console.error("Failed to record search:", err);
       }
@@ -162,7 +175,7 @@ function Searchbar({ externalInputRef } = {}) {
       )}
     </div>
 
-    <button className="random-icon-btn" onClick={handleRandom} title="Random word">
+    <button className={`random-icon-btn${wiggle ? " random-icon-btn--wiggle" : ""}`} onClick={handleRandom} title="Random word">
       <LuShuffle />
     </button>
     </div>

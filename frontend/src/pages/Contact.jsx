@@ -1,6 +1,6 @@
 import "../styles/contact.css";
 
-const CONTACT_EMAIL = "hello@yoursite.com"; // TODO: update once domain is set
+const CONTACT_EMAIL = "contact@grasperr.com";
 
 export default function Contact() {
   return (

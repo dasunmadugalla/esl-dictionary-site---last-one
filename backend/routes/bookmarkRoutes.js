@@ -1,13 +1,15 @@
 import express from "express";
 import { supabase } from "../supabase.js";
+import { verifyUser } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.post("/", async (req, res) => {
-  const { email, wordID } = req.body;
+router.post("/", verifyUser, async (req, res) => {
+  const { wordID } = req.body;
+  const email = req.user.email;
 
-  if (!email || !wordID) {
-    return res.status(400).json({ error: "email and wordID are required" });
+  if (!wordID) {
+    return res.status(400).json({ error: "wordID is required" });
   }
 
   try {

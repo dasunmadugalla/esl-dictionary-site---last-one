@@ -18,11 +18,15 @@ function Search_result() {
   // Track word views (clicks) — only when not arriving from the searchbar
   useEffect(() => {
     if (!user?.email || !search || !ip || location.state?.fromSearch) return;
-    fetch(`${ip}/search/add-search`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: user.email, word: search, type: "view" }),
-    }).catch(() => {});
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      const token = session?.access_token;
+      if (!token) return;
+      fetch(`${ip}/search/add-search`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ word: search, type: "view" }),
+      }).catch(() => {});
+    });
   }, [search, ip, user, location.state?.fromSearch]);
 
   const { data: searchResult, isLoading, error } = useQuery({

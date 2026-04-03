@@ -20,7 +20,7 @@ function App() {
         <button className="hamburger-btn" onClick={() => setMenuOpen(true)}>
           <TbMenu2 />
         </button>
-        <span className="mobile-topbar-title">Lexify</span>
+        <span className="mobile-topbar-title">Grasperr</span>
       </div>
 
       <div className="page-content">

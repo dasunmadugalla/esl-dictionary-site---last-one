@@ -1,14 +1,16 @@
 // routes/searchRoutes.js
 import express from "express";
 import { supabase } from "../supabase.js";
+import { verifyUser } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.post("/add-search", async (req, res) => {
-  const { email, word, type = "search" } = req.body;
+router.post("/add-search", verifyUser, async (req, res) => {
+  const { word, type = "search" } = req.body;
+  const email = req.user.email;
 
-  if (!email || !word) {
-    return res.status(400).json({ error: "Email and word are required" });
+  if (!word) {
+    return res.status(400).json({ error: "Word is required" });
   }
 
   try {
