@@ -27,6 +27,33 @@ button{
   flex: 1;
 }
 
+/* ── Theme toggle (fixed top-right, desktop only) ─────────────── */
+.theme-toggle-btn {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 900;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-2);
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+.theme-toggle-btn:hover {
+  color: var(--text-1);
+  border-color: var(--text-3);
+}
+@media (max-width: 768px) {
+  .theme-toggle-btn { display: none; }
+}
+
 @media (max-width: 700px) {
   .page-content {
     margin-left: 0;

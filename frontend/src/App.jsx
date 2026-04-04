@@ -3,6 +3,8 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import StreakBadge from "./components/StreakBadge";
 import CookieBanner from "./components/CookieBanner";
+import { useTheme } from "./context/ThemeContext";
+import { TbSun, TbMoon } from "react-icons/tb";
 import { Outlet, useLocation } from "react-router-dom";
 import { TbMenu2 } from "react-icons/tb";
 import { supabase } from "./lib/supabase";
@@ -14,6 +16,7 @@ function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
   const { user } = useAuth();
+  const { theme, toggle } = useTheme();
 
   useEffect(() => {
     const path = location.pathname;
@@ -46,6 +49,10 @@ function App() {
         <Outlet />
         <Footer />
       </div>
+
+      <button className="theme-toggle-btn" onClick={toggle} aria-label="Toggle theme">
+        {theme === "dark" ? <TbSun /> : <TbMoon />}
+      </button>
 
       <StreakBadge />
       <CookieBanner />
