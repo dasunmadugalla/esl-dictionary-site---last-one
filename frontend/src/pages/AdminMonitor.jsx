@@ -345,32 +345,32 @@ export default function AdminMonitor() {
           <>
             {/* KPI band — one card, 6 stats with dividers */}
             <div className="am-kpi-band">
-              <div className="am-kpi-item" style={{ "--am-kpi-color": "#3b82f6" }}>
+              <div className="am-kpi-item">
                 <TbUsers className="am-kpi-item-icon" />
                 <span className="am-kpi-item-value">{stats.totalUsers.toLocaleString()}</span>
                 <span className="am-kpi-item-label">Registered Users</span>
               </div>
-              <div className="am-kpi-item" style={{ "--am-kpi-color": "#8b5cf6" }}>
+              <div className="am-kpi-item">
                 <TbDatabase className="am-kpi-item-icon" />
                 <span className="am-kpi-item-value">{wordCount.toLocaleString()}</span>
                 <span className="am-kpi-item-label">Words in Dictionary</span>
               </div>
-              <div className="am-kpi-item" style={{ "--am-kpi-color": "#f59e0b" }}>
+              <div className="am-kpi-item">
                 <TbSearch className="am-kpi-item-icon" />
                 <span className="am-kpi-item-value">{stats.totalSearches.toLocaleString()}</span>
                 <span className="am-kpi-item-label">All-time Searches</span>
               </div>
-              <div className="am-kpi-item" style={{ "--am-kpi-color": "#ef4444" }}>
+              <div className="am-kpi-item">
                 <TbMessageCircle className="am-kpi-item-icon" />
                 <span className="am-kpi-item-value">{feedbackCount.toLocaleString()}</span>
                 <span className="am-kpi-item-label">Feedback Received</span>
               </div>
-              <div className="am-kpi-item" style={{ "--am-kpi-color": "#10b981" }}>
+              <div className="am-kpi-item">
                 <TbPhoto className="am-kpi-item-icon" />
                 <span className="am-kpi-item-value">{stats.totalDownloads.toLocaleString()}</span>
                 <span className="am-kpi-item-label">Snippets Downloaded</span>
               </div>
-              <div className="am-kpi-item" style={{ "--am-kpi-color": "#f472b6" }}>
+              <div className="am-kpi-item">
                 <TbClick className="am-kpi-item-icon" />
                 <span className="am-kpi-item-value">{stats.totalPV.toLocaleString()}</span>
                 <span className="am-kpi-item-label">Total Page Views</span>
@@ -459,7 +459,7 @@ export default function AdminMonitor() {
                         <span className="am-top-word-rank">#{i + 1}</span>
                         <Link to={`/word/${encodeURIComponent(word)}`} className="am-top-word-name">{word}</Link>
                         <div className="am-top-word-bar-track">
-                          <div className="am-top-word-bar" style={{ width: `${(count / topDlMax) * 100}%`, background: "#10b981" }} />
+                          <div className="am-top-word-bar" style={{ width: `${(count / topDlMax) * 100}%` }} />
                         </div>
                         <span className="am-top-word-count">{count}</span>
                       </div>
@@ -511,7 +511,7 @@ export default function AdminMonitor() {
                         <span className="am-top-word-rank">#{i + 1}</span>
                         <span className="am-top-word-name" style={{ color: "var(--text-2)", textTransform: "none" }}>{path}</span>
                         <div className="am-top-word-bar-track">
-                          <div className="am-top-word-bar" style={{ width: `${(count / topPvMax) * 100}%`, background: "#f472b6" }} />
+                          <div className="am-top-word-bar" style={{ width: `${(count / topPvMax) * 100}%` }} />
                         </div>
                         <span className="am-top-word-count">{count}</span>
                       </div>

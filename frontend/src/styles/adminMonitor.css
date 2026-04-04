@@ -164,7 +164,7 @@
 
 .am-kpi-item-icon {
   font-size: 1.1rem;
-  color: var(--am-kpi-color, var(--text-3));
+  color: var(--text-3);
   margin-bottom: 0.3rem;
 }
 
@@ -358,7 +358,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-a.am-top-word-name:hover { color: #3b82f6; }
+a.am-top-word-name:hover { color: var(--text-3); }
 
 .am-top-word-bar-track {
   height: 7px;
@@ -370,7 +370,7 @@ a.am-top-word-name:hover { color: #3b82f6; }
 .am-top-word-bar {
   height: 100%;
   border-radius: 99px;
-  background: #3b82f6;
+  background: var(--text-3);
   transition: width 0.45s ease;
 }
 
