@@ -20,6 +20,12 @@
   box-shadow: 0 24px 64px rgba(0, 0, 0, 0.2);
 }
 
+.cookie-gate-icon {
+  font-size: 2.75rem;
+  margin-bottom: 1rem;
+  line-height: 1;
+}
+
 .cookie-gate-title {
   font-size: 18px;
   font-weight: 800;

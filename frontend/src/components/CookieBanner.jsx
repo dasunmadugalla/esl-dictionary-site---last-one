@@ -25,6 +25,7 @@ export default function CookieBanner() {
   return (
     <div className="cookie-gate">
       <div className="cookie-gate-card">
+        <div className="cookie-gate-icon">🍪</div>
         <h2 className="cookie-gate-title">Before you continue</h2>
         <p className="cookie-gate-text">
           Grasperr uses essential cookies to keep the site running and advertising
