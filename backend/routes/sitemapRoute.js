@@ -5,10 +5,21 @@ const router = express.Router();
 
 router.get("/", async (req, res) => {
   try {
-    const { data: words } = await supabase
-      .from("Words")
-      .select("word")
-      .order("word", { ascending: true });
+    // Paginate to get ALL words past Supabase's 1000-row default limit
+    let words = [];
+    let from = 0;
+    const PAGE = 1000;
+    while (true) {
+      const { data, error } = await supabase
+        .from("Words")
+        .select("word")
+        .order("word", { ascending: true })
+        .range(from, from + PAGE - 1);
+      if (error || !data || data.length === 0) break;
+      words = words.concat(data);
+      if (data.length < PAGE) break;
+      from += PAGE;
+    }
 
     const staticPages = [
       { loc: "https://grasperr.com/",              changefreq: "daily",   priority: "1.0" },
