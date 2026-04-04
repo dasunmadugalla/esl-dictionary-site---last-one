@@ -5,7 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import {
   TbUsers, TbSearch, TbDatabase, TbMessageCircle,
   TbArrowUp, TbArrowDown, TbMinus, TbRefresh,
-  TbArrowLeft, TbEye, TbUserPlus, TbChartBar,
+  TbArrowLeft, TbPhoto, TbClick,
 } from "react-icons/tb";
 
 const ADMIN_EMAILS = import.meta.env.VITE_ADMIN_EMAILS?.split(",").map(e => e.trim()) ?? [];
@@ -137,25 +137,34 @@ export default function AdminMonitor() {
   const navigate = useNavigate();
   const isAdmin = user && ADMIN_EMAILS.includes(user.email);
 
-  const [loading, setLoading]           = useState(true);
+  const [loading, setLoading]             = useState(true);
   const [lastRefreshed, setLastRefreshed] = useState(null);
-  const [searches, setSearches]         = useState([]);
-  const [wordCount, setWordCount]       = useState(0);
+  const [searches, setSearches]           = useState([]);
+  const [downloads, setDownloads]         = useState([]);
+  const [pageViews, setPageViews]         = useState([]);
+  const [wordCount, setWordCount]         = useState(0);
   const [feedbackCount, setFeedbackCount] = useState(0);
-  const [chartView, setChartView]       = useState("days");
+  const [chartView, setChartView]         = useState("days");
+  const [pvChartView, setPvChartView]     = useState("days");
 
   async function load() {
     setLoading(true);
     const [
       { data: sData },
+      { data: dlData },
+      { data: pvData },
       { count: wCount },
       { count: fCount },
     ] = await Promise.all([
       supabase.from("searches").select("email, word, created_at, type").order("created_at", { ascending: false }),
+      supabase.from("downloads").select("email, word, created_at").order("created_at", { ascending: false }),
+      supabase.from("page_views").select("email, path, created_at").order("created_at", { ascending: false }),
       supabase.from("Words").select("*", { count: "exact", head: true }),
       supabase.from("Feedback").select("*", { count: "exact", head: true }),
     ]);
     setSearches(sData || []);
+    setDownloads(dlData || []);
+    setPageViews(pvData || []);
     setWordCount(wCount || 0);
     setFeedbackCount(fCount || 0);
     setLastRefreshed(new Date());
@@ -232,6 +241,32 @@ export default function AdminMonitor() {
       ? +(last30DayKeys.reduce((sum, d) => sum + dayMap[d].size, 0) / last30DayKeys.length).toFixed(1)
       : 0;
 
+    // ── Downloads ─────────────────────────────────────────────
+    const todayDownloads   = downloads.filter(d => d.created_at.slice(0, 10) === today).length;
+    const thisWeekDl       = downloads.filter(d => new Date(d.created_at) >= startThisWeek).length;
+    const lastWeekDl       = downloads.filter(d => { const dt = new Date(d.created_at); return dt >= startLastWeek && dt < startThisWeek; }).length;
+    const dl30             = downloads.filter(d => new Date(d.created_at) >= last30).length;
+    const avgDailyDownloads = +(dl30 / 30).toFixed(1);
+    const dlWeekTrend      = lastWeekDl > 0 ? Math.round(((thisWeekDl - lastWeekDl) / lastWeekDl) * 100) : null;
+
+    // Top downloaded words
+    const dlwc = {};
+    downloads.forEach(d => { dlwc[d.word] = (dlwc[d.word] || 0) + 1; });
+    const topDownloaded = Object.entries(dlwc).sort((a, b) => b[1] - a[1]).slice(0, 5).map(([word, count]) => ({ word, count }));
+
+    // ── Page views ────────────────────────────────────────────
+    const todayPV      = pageViews.filter(p => p.created_at.slice(0, 10) === today).length;
+    const thisWeekPV   = pageViews.filter(p => new Date(p.created_at) >= startThisWeek).length;
+    const lastWeekPV   = pageViews.filter(p => { const dt = new Date(p.created_at); return dt >= startLastWeek && dt < startThisWeek; }).length;
+    const pv30         = pageViews.filter(p => new Date(p.created_at) >= last30).length;
+    const avgDailyPV   = +(pv30 / 30).toFixed(1);
+    const pvWeekTrend  = lastWeekPV > 0 ? Math.round(((thisWeekPV - lastWeekPV) / lastWeekPV) * 100) : null;
+
+    // Top pages
+    const ppc = {};
+    pageViews.forEach(p => { ppc[p.path] = (ppc[p.path] || 0) + 1; });
+    const topPages = Object.entries(ppc).sort((a, b) => b[1] - a[1]).slice(0, 8).map(([path, count]) => ({ path, count }));
+
     return {
       totalUsers, totalSearches: allSearches.length, totalViews: allViews.length,
       todaySearches, todayViews, activeToday,
@@ -239,8 +274,12 @@ export default function AdminMonitor() {
       activeThisWeek, newUsersThisWeek,
       avgDailySearches, avgPerUser, avgDailyUsers,
       weekTrend, viewTrend, topWords,
+      todayDownloads, thisWeekDl, lastWeekDl, avgDailyDownloads, dlWeekTrend, topDownloaded,
+      totalDownloads: downloads.length,
+      todayPV, thisWeekPV, lastWeekPV, avgDailyPV, pvWeekTrend, topPages,
+      totalPV: pageViews.length,
     };
-  }, [searches]);
+  }, [searches, downloads, pageViews]);
 
   // ── Chart data ───────────────────────────────────────────────
   const chartData = useMemo(() => {
@@ -274,7 +313,41 @@ export default function AdminMonitor() {
     });
   }, [searches, chartView]);
 
-  const topMax = stats.topWords[0]?.count || 1;
+  // ── Page view chart data ─────────────────────────────────────
+  const pvChartData = useMemo(() => {
+    const now = new Date();
+    if (pvChartView === "days") {
+      return Array.from({ length: 30 }, (_, i) => {
+        const d = new Date(now);
+        d.setDate(now.getDate() - (29 - i));
+        const ds = d.toISOString().slice(0, 10);
+        return {
+          label: d.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+          searches: pageViews.filter(p => p.created_at.slice(0, 10) === ds).length,
+          views:    downloads.filter(p => p.created_at.slice(0, 10) === ds).length,
+          showLabel: i % 6 === 0 || i === 29,
+        };
+      });
+    }
+    const dow = now.getDay();
+    const sow = new Date(now);
+    sow.setDate(now.getDate() - (dow === 0 ? 6 : dow - 1));
+    sow.setHours(0, 0, 0, 0);
+    return Array.from({ length: 12 }, (_, i) => {
+      const ws = new Date(sow); ws.setDate(sow.getDate() - (11 - i) * 7);
+      const we = new Date(ws); we.setDate(ws.getDate() + 7);
+      return {
+        label: ws.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+        searches: pageViews.filter(p => new Date(p.created_at) >= ws && new Date(p.created_at) < we).length,
+        views:    downloads.filter(p => new Date(p.created_at) >= ws && new Date(p.created_at) < we).length,
+        showLabel: true,
+      };
+    });
+  }, [pageViews, downloads, pvChartView]);
+
+  const topMax   = stats.topWords[0]?.count    || 1;
+  const topDlMax = stats.topDownloaded[0]?.count || 1;
+  const topPvMax = stats.topPages[0]?.count     || 1;
 
   return (
     <div className="am-page">
@@ -307,10 +380,12 @@ export default function AdminMonitor() {
           <>
             {/* KPI grid */}
             <div className="am-kpi-grid">
-              <KpiCard icon={<TbUsers />}        label="Registered Users"     value={stats.totalUsers.toLocaleString()}        accent="#3b82f6" />
-              <KpiCard icon={<TbDatabase />}      label="Words in Dictionary"  value={wordCount.toLocaleString()}               accent="#8b5cf6" />
-              <KpiCard icon={<TbSearch />}        label="All-time Searches"    value={stats.totalSearches.toLocaleString()}     accent="#f59e0b" />
-              <KpiCard icon={<TbMessageCircle />} label="Feedback Received"    value={feedbackCount.toLocaleString()}           accent="#ef4444" />
+              <KpiCard icon={<TbUsers />}        label="Registered Users"     value={stats.totalUsers.toLocaleString()}          accent="#3b82f6" />
+              <KpiCard icon={<TbDatabase />}      label="Words in Dictionary"  value={wordCount.toLocaleString()}                 accent="#8b5cf6" />
+              <KpiCard icon={<TbSearch />}        label="All-time Searches"    value={stats.totalSearches.toLocaleString()}       accent="#f59e0b" />
+              <KpiCard icon={<TbMessageCircle />} label="Feedback Received"    value={feedbackCount.toLocaleString()}             accent="#ef4444" />
+              <KpiCard icon={<TbPhoto />}         label="Snippets Downloaded"  value={stats.totalDownloads.toLocaleString()}      accent="#10b981" />
+              <KpiCard icon={<TbClick />}         label="Total Page Views"     value={stats.totalPV.toLocaleString()}             accent="#f472b6" />
             </div>
 
             {/* Metrics strip */}
@@ -358,6 +433,87 @@ export default function AdminMonitor() {
                 </div>
               </div>
               <DualLineChart data={chartData} />
+            </div>
+
+            {/* Downloads section */}
+            <div className="am-section-card">
+              <div className="am-section-header">
+                <div>
+                  <h2 className="am-section-title">Snippet Downloads</h2>
+                  <div className="am-chart-legend">
+                    <span className="am-legend-dot" style={{ background: "#10b981" }} />Downloads
+                    <span className="am-legend-dot" style={{ background: "#3b82f6" }} />Page views
+                  </div>
+                </div>
+              </div>
+              <div className="am-metrics-grid" style={{ marginBottom: "0.5rem" }}>
+                <MetricTile label="Downloads Today"        value={stats.todayDownloads} />
+                <MetricTile label="Downloads This Week"    value={stats.thisWeekDl}
+                  trend={stats.dlWeekTrend}
+                  trendLabel={stats.dlWeekTrend !== null ? `${Math.abs(stats.dlWeekTrend)}% vs last week` : null}
+                />
+                <MetricTile label="Avg Daily Downloads (30d)" value={stats.avgDailyDownloads} />
+              </div>
+              {stats.topDownloaded.length > 0 && (
+                <>
+                  <p className="am-section-sub">Most downloaded words</p>
+                  <div className="am-top-words">
+                    {stats.topDownloaded.map(({ word, count }, i) => (
+                      <div key={word} className="am-top-word-row">
+                        <span className="am-top-word-rank">#{i + 1}</span>
+                        <Link to={`/word/${encodeURIComponent(word)}`} className="am-top-word-name">{word}</Link>
+                        <div className="am-top-word-bar-track">
+                          <div className="am-top-word-bar" style={{ width: `${(count / topDlMax) * 100}%`, background: "#10b981" }} />
+                        </div>
+                        <span className="am-top-word-count">{count}</span>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Page views section */}
+            <div className="am-section-card">
+              <div className="am-section-header">
+                <div>
+                  <h2 className="am-section-title">Page Views</h2>
+                  <div className="am-chart-legend">
+                    <span className="am-legend-dot" style={{ background: "#f472b6" }} />Page views
+                    <span className="am-legend-dot" style={{ background: "#10b981" }} />Downloads
+                  </div>
+                </div>
+                <div className="chart-timeframe-toggle">
+                  <button className={`chart-timeframe-btn${pvChartView === "days"  ? " active" : ""}`} onClick={() => setPvChartView("days")}>Days</button>
+                  <button className={`chart-timeframe-btn${pvChartView === "weeks" ? " active" : ""}`} onClick={() => setPvChartView("weeks")}>Weeks</button>
+                </div>
+              </div>
+              <div className="am-metrics-grid" style={{ marginBottom: "0.5rem" }}>
+                <MetricTile label="Page Views Today"        value={stats.todayPV} />
+                <MetricTile label="Page Views This Week"    value={stats.thisWeekPV}
+                  trend={stats.pvWeekTrend}
+                  trendLabel={stats.pvWeekTrend !== null ? `${Math.abs(stats.pvWeekTrend)}% vs last week` : null}
+                />
+                <MetricTile label="Avg Daily Page Views (30d)" value={stats.avgDailyPV} />
+              </div>
+              <DualLineChart data={pvChartData} />
+              {stats.topPages.length > 0 && (
+                <>
+                  <p className="am-section-sub" style={{ marginTop: "0.5rem" }}>Most visited pages</p>
+                  <div className="am-top-words">
+                    {stats.topPages.map(({ path, count }, i) => (
+                      <div key={path} className="am-top-word-row">
+                        <span className="am-top-word-rank">#{i + 1}</span>
+                        <span className="am-top-word-name" style={{ color: "var(--text-2)" }}>{path}</span>
+                        <div className="am-top-word-bar-track">
+                          <div className="am-top-word-bar" style={{ width: `${(count / topPvMax) * 100}%`, background: "#f472b6" }} />
+                        </div>
+                        <span className="am-top-word-count">{count}</span>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
 
             {/* Top words */}

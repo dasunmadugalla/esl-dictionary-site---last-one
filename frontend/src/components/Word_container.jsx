@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { TbVolume, TbStar, TbShare, TbStarFilled, TbDownload, TbFolderPlus, TbCheck, TbPlus, TbBulb, TbHeadphones } from "react-icons/tb";
+import { TbVolume, TbStar, TbShare, TbStarFilled, TbDownload, TbFolderPlus, TbCheck, TbPlus, TbBulb, TbHeadphones, TbAtom } from "react-icons/tb";
 import { useAuth } from "../context/AuthContext";
 import { useLocation, Link, useNavigate } from "react-router-dom";
 import Url_snippet from "../components/Url_snippet";
@@ -267,6 +267,13 @@ function Word_container({ details: searchResult = {} }) {
       link.download = `${searchResult.word || "word-snippet"}.png`;
       link.href = dataUrl;
       link.click();
+
+      supabase.from("downloads").insert({
+        email: user?.email ?? null,
+        word:  searchResult.word,
+      }).then(({ error }) => {
+        if (error) console.error("Download tracking error:", error);
+      });
     } catch (err) {
       showToast("Download failed. Try again.");
     }
@@ -435,12 +442,13 @@ function Word_container({ details: searchResult = {} }) {
 
         {hasTechDef && (
           <div className="tech-definition">
-            <h4 className="tech-definition-title">
+            <span className="tech-definition-label">
+              <TbAtom />
               Technical Explanation
               {typeof techDef.subject === "string" && techDef.subject && (
-                <> — <span className="tech-definition-subject">{techDef.subject}</span></>
+                <span className="tech-definition-subject">{techDef.subject}</span>
               )}
-            </h4>
+            </span>
             <p className="tech-definition-text"><ClickableSentence text={techDef.definition} /></p>
           </div>
         )}
