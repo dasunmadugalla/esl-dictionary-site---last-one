@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import StreakBadge from "./components/StreakBadge";
+import CookieBanner from "./components/CookieBanner";
 import { Outlet, useLocation } from "react-router-dom";
 import { TbMenu2 } from "react-icons/tb";
 import { supabase } from "./lib/supabase";
@@ -47,6 +48,7 @@ function App() {
       </div>
 
       <StreakBadge />
+      <CookieBanner />
     </>
   );
 }
