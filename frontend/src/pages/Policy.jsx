@@ -5,7 +5,7 @@ import "../styles/policy.css";
 const SITE_NAME = "Grasperr";
 const SITE_URL = "grasperr.com";
 const CONTACT_EMAIL = "contact@grasperr.com";
-const LAST_UPDATED = "2025";
+const LAST_UPDATED = "April 2026";
 
 function Section({ title, children }) {
   return (
@@ -59,8 +59,9 @@ function Policy() {
             </ul>
             <p className="policy-note">
               We do <strong>not</strong> collect your name, phone number, location,
-              IP address, or device information. We do not build advertising profiles
-              on individual users.
+              or device information. We do not build advertising profiles on individual
+              users. IP addresses are processed transiently by our servers for security
+              and rate-limiting purposes but are not stored or logged.
             </p>
           </Section>
 
