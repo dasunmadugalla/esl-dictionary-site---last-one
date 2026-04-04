@@ -1,10 +1,10 @@
 function Word_snippet({ data }) {
   const techDef   = data.technical_definition?.definition?.trim();
-  const meaning   = data.meanings[0];
-  const pos       = meaning.part_of_speech;
-  const definition = techDef ? techDef : meaning.definition;
+  const meaning   = data.meanings?.[0];
+  const pos       = meaning?.part_of_speech;
+  const definition = techDef ? techDef : meaning?.definition;
 
-  const exArr  = meaning.example;
+  const exArr  = meaning?.example;
   const example = Array.isArray(exArr)
     ? exArr[0]?.sentence
     : typeof exArr === "string" ? exArr : null;

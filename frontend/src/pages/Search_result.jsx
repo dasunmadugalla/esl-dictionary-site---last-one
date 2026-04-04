@@ -1,5 +1,6 @@
-import React, { useContext, useEffect } from "react";
-import { useParams, useLocation } from "react-router-dom";
+import React, { useContext } from "react";
+import { TbArrowLeft } from "react-icons/tb";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import Word_container from "../components/Word_container";
 import { supabase } from "../lib/supabase";
@@ -7,27 +8,13 @@ import { IPContext } from "../context/IPContext";
 import Recently_viewed from "../components/Recently_viewed";
 import WordSkeleton from "../components/WordSkeleton";
 import Searchbar from "../components/Searchbar";
-import { useAuth } from "../context/AuthContext";
 
 function Search_result() {
   const { ip } = useContext(IPContext);
   const { search } = useParams();
   const location = useLocation();
-  const { user } = useAuth();
+  const navigate = useNavigate();
 
-  // Track word views (clicks) — only when not arriving from the searchbar
-  useEffect(() => {
-    if (!user?.email || !search || !ip || location.state?.fromSearch) return;
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      const token = session?.access_token;
-      if (!token) return;
-      fetch(`${ip}/search/add-search`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ word: search, type: "view" }),
-      }).catch(() => {});
-    });
-  }, [search, ip, user, location.state?.fromSearch]);
 
   const { data: searchResult, isLoading, error } = useQuery({
     queryKey: ["word", search],
@@ -38,18 +25,89 @@ function Search_result() {
       const headers = token ? { Authorization: `Bearer ${token}` } : {};
       const res = await fetch(`${ip}/word/${encodeURIComponent(search)}`, { headers });
 
-      if (res.status === 404) throw new Error(`"${search}" doesn't appear to be a valid English word.`);
+      if (res.status === 404) {
+        const err = new Error(`"${search}" doesn't appear to be a valid English word.`);
+        err.status = 404;
+        throw err;
+      }
       if (!res.ok) throw new Error(`Server error: ${res.status}`);
+
+      // Only record history after confirmed valid word
+      if (token) {
+        const type = location.state?.fromSearch ? "search" : "view";
+        fetch(`${ip}/search/add-search`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ word: search, type }),
+        }).catch(() => {});
+      }
+
       return res.json();
     },
     enabled: !!search && !!ip,
     staleTime: 10 * 60 * 1000, // word definitions don't change — cache 10 mins
   });
 
+  const { data: suggestions } = useQuery({
+    queryKey: ["suggestions", search],
+    queryFn: async () => {
+      const [spRes, slRes] = await Promise.all([
+        fetch(`https://api.datamuse.com/words?sp=${encodeURIComponent(search)}&max=10`),
+        fetch(`https://api.datamuse.com/words?sl=${encodeURIComponent(search)}&max=10`),
+      ]);
+      const [spData, slData] = await Promise.all([spRes.json(), slRes.json()]);
+      const seen = new Set();
+      const merged = [];
+      for (const w of [...spData, ...slData]) {
+        if (!seen.has(w.word)) {
+          seen.add(w.word);
+          merged.push(w.word);
+        }
+        if (merged.length === 5) break;
+      }
+      return merged;
+    },
+    enabled: !!search && error?.status === 404,
+    staleTime: 5 * 60 * 1000,
+  });
+
   const renderContent = () => {
     if (isLoading) return <WordSkeleton />;
 
     if (error) {
+      if (error.status === 404) {
+        return (
+          <div className="word-not-found-wrapper">
+            <button className="word-not-found-back" onClick={() => navigate(-1)}>
+              <TbArrowLeft />
+            </button>
+            <div className="word-not-found">
+              <div className="word-not-found-term">{search}</div>
+              <div className="word-not-found-divider" />
+              <p className="word-not-found-title">Not a valid word</p>
+              <p className="word-not-found-sub">
+                We couldn't find <strong>"{search}"</strong> in the dictionary. Check your spelling and try again.
+              </p>
+              {suggestions?.length > 0 && (
+                <div className="word-not-found-suggestions">
+                  <p className="word-not-found-suggestions-label">Did you mean?</p>
+                  <div className="word-not-found-suggestions-list">
+                    {suggestions.map((word) => (
+                      <button
+                        key={word}
+                        className="word-not-found-suggestion-chip"
+                        onClick={() => navigate(`/word/${encodeURIComponent(word)}`)}
+                      >
+                        {word}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      }
       return (
         <div className="word-result-wrapper">
           <p className="result-error">{error.message}</p>

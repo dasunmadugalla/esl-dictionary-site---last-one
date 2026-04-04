@@ -75,21 +75,6 @@ function Searchbar({ externalInputRef } = {}) {
     // Navigate to word page — flag so Search_result knows it came from a search
     navigate(`/word/${encodeURIComponent(normalizeWord(value))}`, { state: { fromSearch: true } });
 
-    // Record search in backend if logged in
-    if (user?.email) {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        const token = session?.access_token;
-        await fetch(`${ip}/search/add-search`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-          body: JSON.stringify({ word: normalizeWord(value), type: "search" }),
-        });
-      } catch (err) {
-        console.error("Failed to record search:", err);
-      }
-    }
-
     setSuggestions([]);
     setActiveIndex(-1);
   };
