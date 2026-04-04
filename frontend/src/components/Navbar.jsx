@@ -13,15 +13,19 @@ import {
   TbX,
   TbSun,
   TbMoon,
+  TbChartBar,
 } from "react-icons/tb";
 import { useAuth } from "../context/AuthContext.jsx";
 import { useTheme } from "../context/ThemeContext.jsx";
 import { supabase } from "../lib/supabase";
 import logo from "../assets/logo-white.png";
 
+const ADMIN_EMAILS = import.meta.env.VITE_ADMIN_EMAILS?.split(",").map(e => e.trim()) ?? [];
+
 function Navbar({ menuOpen, onClose }) {
   const { user, loading } = useAuth();
   const { theme, toggle } = useTheme();
+  const isAdmin = user && ADMIN_EMAILS.includes(user.email);
   const navigate = useNavigate();
   const [logoutVisible, setLogoutVisible] = useState(false);
 
@@ -100,6 +104,20 @@ function Navbar({ menuOpen, onClose }) {
           </NavLink>
         </li>
       </ul>
+
+      {isAdmin && (
+        <>
+          <hr />
+          <ul>
+            <li>
+              <NavLink to="/admin/monitor" className={navClass} onClick={handleNavClick}>
+                <TbChartBar className="nav-icon" />
+                <span className="nav-txt">Site Monitor</span>
+              </NavLink>
+            </li>
+          </ul>
+        </>
+      )}
 
       <hr />
 
