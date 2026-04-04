@@ -4,7 +4,7 @@ import Footer from "./components/Footer";
 import StreakBadge from "./components/StreakBadge";
 import CookieBanner from "./components/CookieBanner";
 import { useTheme } from "./context/ThemeContext";
-import { TbSun, TbMoon } from "react-icons/tb";
+import { TbSunHigh, TbMoonStars } from "react-icons/tb";
 import { Outlet, useLocation } from "react-router-dom";
 import { TbMenu2 } from "react-icons/tb";
 import { supabase } from "./lib/supabase";
@@ -51,7 +51,9 @@ function App() {
       </div>
 
       <button className="theme-toggle-btn" onClick={toggle} aria-label="Toggle theme">
-        {theme === "dark" ? <TbSun /> : <TbMoon />}
+        {theme === "dark"
+          ? <TbSunHigh key="sun" className="theme-toggle-icon" />
+          : <TbMoonStars key="moon" className="theme-toggle-icon" />}
       </button>
 
       <StreakBadge />
