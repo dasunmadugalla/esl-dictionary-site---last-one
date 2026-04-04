@@ -10,6 +10,7 @@ import search from "./routes/searchWord.js"
 import searchRoutes from "./routes/searchRoutes.js";
 import random from "./routes/random.js"
 import accountRoutes from "./routes/accountRoutes.js"
+import sitemapRoute from "./routes/sitemapRoute.js"
 
 dotenv.config();
 
@@ -49,6 +50,7 @@ app.use("/api", apiRoutes);
 app.use("/search", searchRoutes);
 app.use("/random-word", random)
 app.use("/account", accountRoutes)
+app.use("/sitemap.xml", sitemapRoute)
 
 
 app.get("/", (req, res) => {
