@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
+import rateLimit from "express-rate-limit";
 import OpenAI from "openai";
 import { word } from "./src/word.js";
 import apiRoutes from "./routes/apiRoutes.js";
@@ -27,6 +28,15 @@ app.use(cors({
   },
 }));
 app.use(express.json());
+
+// Global rate limit — covers all routes as a baseline
+app.use(rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 200,                  // 200 requests per IP per 15 min
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Too many requests. Please try again later." },
+}));
 
 const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
