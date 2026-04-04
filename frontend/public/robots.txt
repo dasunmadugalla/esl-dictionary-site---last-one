@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /auth
+Disallow: /verify-otp
+Disallow: /settings
+Disallow: /history
+Disallow: /dashboard
+Disallow: /collections
+Disallow: /bookmarks
+Disallow: /feedback
+
+Sitemap: https://grasperr.com/sitemap.xml
