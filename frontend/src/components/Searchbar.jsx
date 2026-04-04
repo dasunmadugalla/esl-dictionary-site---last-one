@@ -15,31 +15,28 @@ function Searchbar({ externalInputRef } = {}) {
   const { ip } = useContext(IPContext);
   const ownInputRef = useRef(null);
   const inputRef = externalInputRef || ownInputRef;
-  const [wiggle, setWiggle] = useState(false);
-  const hasClickedRandom = useRef(false);
-  const wiggleTimeout = useRef(null);
-
+  const wrapperRef = useRef(null);
   useEffect(() => {
-    const schedule = () => {
-      if (hasClickedRandom.current) return;
-      const delay = Math.random() * 6000 + 4000;
-      wiggleTimeout.current = setTimeout(() => {
-        if (hasClickedRandom.current) return;
-        setWiggle(true);
-        setTimeout(() => setWiggle(false), 600);
-        schedule();
-      }, delay);
+    const handleClickOutside = (e) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target)) {
+        setSuggestions([]);
+        setActiveIndex(-1);
+      }
     };
-    schedule();
-    return () => clearTimeout(wiggleTimeout.current);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
 
   // Normalize input
   const normalizeWord = (word) =>
     word.trim().toLowerCase().replace(/[-_]+/g, " ").replace(/\s+/g, " ");
 
   const handleSearch = (value = search_value) => {
-    if (!value.trim()) return;
+    if (!value.trim()) {
+      setSuggestions([]);
+      return;
+    }
 
     // Navigate to word page — flag so Search_result knows it came from a search
     navigate(`/word/${encodeURIComponent(normalizeWord(value))}`, { state: { fromSearch: true } });
@@ -57,7 +54,20 @@ function Searchbar({ externalInputRef } = {}) {
     try {
       const res = await fetch(`https://api.datamuse.com/sug?s=${query}`);
       const data = await res.json();
-      setSuggestions(data.slice(0, 5));
+      const candidates = data.slice(0, 10);
+
+      const results = await Promise.all(
+        candidates.map(async (sug) => {
+          try {
+            const r = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(sug.word)}`);
+            return r.status === 200 ? sug : null;
+          } catch {
+            return null;
+          }
+        })
+      );
+
+      setSuggestions(results.filter(Boolean).slice(0, 5));
       setActiveIndex(-1);
     } catch (err) {
       console.error("Error fetching suggestions:", err);
@@ -83,9 +93,6 @@ function Searchbar({ externalInputRef } = {}) {
   };
 
   const handleRandom = async () => {
-    hasClickedRandom.current = true;
-    setWiggle(false);
-    clearTimeout(wiggleTimeout.current);
     try {
       const res = await fetch(`${ip}/random-word`);
       const { word } = await res.json();
@@ -97,7 +104,7 @@ function Searchbar({ externalInputRef } = {}) {
 
   return (
     <div className="searchbar-outer">
-    <div className="searchbar-wrapper">
+    <div className="searchbar-wrapper" ref={wrapperRef}>
       <div className="searchbar-input-box">
         <input
           ref={inputRef}
@@ -135,7 +142,7 @@ function Searchbar({ externalInputRef } = {}) {
       )}
     </div>
 
-    <button className={`random-icon-btn${wiggle ? " random-icon-btn--wiggle" : ""}`} onClick={handleRandom} title="Random word">
+    <button className="random-icon-btn" onClick={handleRandom} title="Random word">
       <LuShuffle />
     </button>
     </div>

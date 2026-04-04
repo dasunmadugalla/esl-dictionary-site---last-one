@@ -4,7 +4,7 @@ import { supabase } from "../lib/supabase";
 import { useAuth } from "../context/AuthContext";
 import {
   TbUsers, TbSearch, TbDatabase, TbMessageCircle,
-  TbArrowUp, TbArrowDown, TbMinus, TbRefresh,
+  TbArrowUp, TbArrowDown, TbRefresh,
   TbArrowLeft, TbPhoto, TbClick,
 } from "react-icons/tb";
 
@@ -92,34 +92,12 @@ function DualLineChart({ data }) {
   );
 }
 
-// ── KPI card ─────────────────────────────────────────────────────
-function KpiCard({ icon, label, value, accent }) {
-  return (
-    <div className="am-kpi-card" style={{ "--am-accent": accent }}>
-      <span className="am-kpi-icon">{icon}</span>
-      <span className="am-kpi-value">{value}</span>
-      <span className="am-kpi-label">{label}</span>
-    </div>
-  );
-}
-
-// ── Metric tile ──────────────────────────────────────────────────
-function MetricTile({ label, value, trend, trendLabel }) {
-  return (
-    <div className="am-metric-tile">
-      <span className="am-metric-value">{value}</span>
-      <span className="am-metric-label">{label}</span>
-      {trendLabel && (
-        <span className={`am-metric-trend ${
-          trend > 0 ? "am-metric-trend--up"
-          : trend < 0 ? "am-metric-trend--down"
-          : "am-metric-trend--flat"}`}>
-          {trend > 0 ? <TbArrowUp /> : trend < 0 ? <TbArrowDown /> : <TbMinus />}
-          {trendLabel}
-        </span>
-      )}
-    </div>
-  );
+// ── Trend indicator ──────────────────────────────────────────────
+function Trend({ value }) {
+  if (value === null || value === undefined) return null;
+  if (value > 0) return <span className="am-stat-trend am-stat-trend--up"><TbArrowUp />{Math.abs(value)}% vs last week</span>;
+  if (value < 0) return <span className="am-stat-trend am-stat-trend--down"><TbArrowDown />{Math.abs(value)}% vs last week</span>;
+  return null;
 }
 
 // ── Time ago ─────────────────────────────────────────────────────
@@ -175,7 +153,7 @@ export default function AdminMonitor() {
 
   if (!user) { navigate("/auth", { replace: true }); return null; }
   if (!isAdmin) return (
-    <div className="af-denied">
+    <div className="am-denied">
       <h2>Access denied</h2>
       <p>You don't have permission to view this page.</p>
       <button onClick={() => navigate(-1)}><TbArrowLeft /> Go back</button>
@@ -229,25 +207,13 @@ export default function AdminMonitor() {
     allSearches.forEach(s => { wc[s.word] = (wc[s.word] || 0) + 1; });
     const topWords = Object.entries(wc).sort((a, b) => b[1] - a[1]).slice(0, 10).map(([word, count]) => ({ word, count }));
 
-    // Daily unique users (avg)
-    const dayMap = {};
-    searches.forEach(s => {
-      const d = s.created_at.slice(0, 10);
-      if (!dayMap[d]) dayMap[d] = new Set();
-      dayMap[d].add(s.email);
-    });
-    const last30DayKeys = Object.keys(dayMap).filter(d => new Date(d) >= last30);
-    const avgDailyUsers = last30DayKeys.length > 0
-      ? +(last30DayKeys.reduce((sum, d) => sum + dayMap[d].size, 0) / last30DayKeys.length).toFixed(1)
-      : 0;
-
     // ── Downloads ─────────────────────────────────────────────
-    const todayDownloads   = downloads.filter(d => d.created_at.slice(0, 10) === today).length;
-    const thisWeekDl       = downloads.filter(d => new Date(d.created_at) >= startThisWeek).length;
-    const lastWeekDl       = downloads.filter(d => { const dt = new Date(d.created_at); return dt >= startLastWeek && dt < startThisWeek; }).length;
-    const dl30             = downloads.filter(d => new Date(d.created_at) >= last30).length;
+    const todayDownloads    = downloads.filter(d => d.created_at.slice(0, 10) === today).length;
+    const thisWeekDl        = downloads.filter(d => new Date(d.created_at) >= startThisWeek).length;
+    const lastWeekDl        = downloads.filter(d => { const dt = new Date(d.created_at); return dt >= startLastWeek && dt < startThisWeek; }).length;
+    const dl30              = downloads.filter(d => new Date(d.created_at) >= last30).length;
     const avgDailyDownloads = +(dl30 / 30).toFixed(1);
-    const dlWeekTrend      = lastWeekDl > 0 ? Math.round(((thisWeekDl - lastWeekDl) / lastWeekDl) * 100) : null;
+    const dlWeekTrend       = lastWeekDl > 0 ? Math.round(((thisWeekDl - lastWeekDl) / lastWeekDl) * 100) : null;
 
     // Top downloaded words
     const dlwc = {};
@@ -270,13 +236,12 @@ export default function AdminMonitor() {
     return {
       totalUsers, totalSearches: allSearches.length, totalViews: allViews.length,
       todaySearches, todayViews, activeToday,
-      thisWeekS, lastWeekS, thisWeekV, lastWeekV,
+      thisWeekS, thisWeekV, weekTrend, viewTrend,
       activeThisWeek, newUsersThisWeek,
-      avgDailySearches, avgPerUser, avgDailyUsers,
-      weekTrend, viewTrend, topWords,
-      todayDownloads, thisWeekDl, lastWeekDl, avgDailyDownloads, dlWeekTrend, topDownloaded,
+      avgDailySearches, avgPerUser, topWords,
+      todayDownloads, thisWeekDl, avgDailyDownloads, dlWeekTrend, topDownloaded,
       totalDownloads: downloads.length,
-      todayPV, thisWeekPV, lastWeekPV, avgDailyPV, pvWeekTrend, topPages,
+      todayPV, thisWeekPV, avgDailyPV, pvWeekTrend, topPages,
       totalPV: pageViews.length,
     };
   }, [searches, downloads, pageViews]);
@@ -354,77 +319,86 @@ export default function AdminMonitor() {
       <div className="am-wrapper">
 
         {/* Header */}
-        <div className="af-header">
-          <div className="af-header-left">
-            <button className="af-back-btn" onClick={() => navigate(-1)}>
+        <div className="am-header">
+          <div className="am-header-left">
+            <button className="am-back-btn" onClick={() => navigate(-1)}>
               <TbArrowLeft /> Back
             </button>
             <div>
-              <h1 className="af-title">Site Monitor</h1>
-              <p className="af-sub">
+              <h1 className="am-header-title">Site Monitor</h1>
+              <p className="am-header-sub">
                 {loading ? "Loading…" : `Refreshed ${timeAgo(lastRefreshed)} · ${searches.length.toLocaleString()} total records`}
               </p>
             </div>
           </div>
-          <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+          <div className="am-header-actions">
             <Link to="/admin/feedback" className="am-link-btn">
               <TbMessageCircle /> Feedback inbox
             </Link>
-            <button className="af-refresh-btn" onClick={load} disabled={loading}>
-              <TbRefresh className={loading ? "af-spin" : ""} />
+            <button className="am-refresh-btn" onClick={load} disabled={loading}>
+              <TbRefresh className={loading ? "am-spin" : ""} />
             </button>
           </div>
         </div>
 
-        {loading ? <div className="af-loading">Loading monitor data…</div> : (
+        {loading ? <div className="am-loading">Loading monitor data…</div> : (
           <>
-            {/* KPI grid */}
-            <div className="am-kpi-grid">
-              <KpiCard icon={<TbUsers />}        label="Registered Users"     value={stats.totalUsers.toLocaleString()}          accent="#3b82f6" />
-              <KpiCard icon={<TbDatabase />}      label="Words in Dictionary"  value={wordCount.toLocaleString()}                 accent="#8b5cf6" />
-              <KpiCard icon={<TbSearch />}        label="All-time Searches"    value={stats.totalSearches.toLocaleString()}       accent="#f59e0b" />
-              <KpiCard icon={<TbMessageCircle />} label="Feedback Received"    value={feedbackCount.toLocaleString()}             accent="#ef4444" />
-              <KpiCard icon={<TbPhoto />}         label="Snippets Downloaded"  value={stats.totalDownloads.toLocaleString()}      accent="#10b981" />
-              <KpiCard icon={<TbClick />}         label="Total Page Views"     value={stats.totalPV.toLocaleString()}             accent="#f472b6" />
+            {/* KPI band — one card, 6 stats with dividers */}
+            <div className="am-kpi-band">
+              <div className="am-kpi-item" style={{ "--am-kpi-color": "#3b82f6" }}>
+                <TbUsers className="am-kpi-item-icon" />
+                <span className="am-kpi-item-value">{stats.totalUsers.toLocaleString()}</span>
+                <span className="am-kpi-item-label">Registered Users</span>
+              </div>
+              <div className="am-kpi-item" style={{ "--am-kpi-color": "#8b5cf6" }}>
+                <TbDatabase className="am-kpi-item-icon" />
+                <span className="am-kpi-item-value">{wordCount.toLocaleString()}</span>
+                <span className="am-kpi-item-label">Words in Dictionary</span>
+              </div>
+              <div className="am-kpi-item" style={{ "--am-kpi-color": "#f59e0b" }}>
+                <TbSearch className="am-kpi-item-icon" />
+                <span className="am-kpi-item-value">{stats.totalSearches.toLocaleString()}</span>
+                <span className="am-kpi-item-label">All-time Searches</span>
+              </div>
+              <div className="am-kpi-item" style={{ "--am-kpi-color": "#ef4444" }}>
+                <TbMessageCircle className="am-kpi-item-icon" />
+                <span className="am-kpi-item-value">{feedbackCount.toLocaleString()}</span>
+                <span className="am-kpi-item-label">Feedback Received</span>
+              </div>
+              <div className="am-kpi-item" style={{ "--am-kpi-color": "#10b981" }}>
+                <TbPhoto className="am-kpi-item-icon" />
+                <span className="am-kpi-item-value">{stats.totalDownloads.toLocaleString()}</span>
+                <span className="am-kpi-item-label">Snippets Downloaded</span>
+              </div>
+              <div className="am-kpi-item" style={{ "--am-kpi-color": "#f472b6" }}>
+                <TbClick className="am-kpi-item-icon" />
+                <span className="am-kpi-item-value">{stats.totalPV.toLocaleString()}</span>
+                <span className="am-kpi-item-label">Total Page Views</span>
+              </div>
             </div>
 
-            {/* Metrics strip */}
-            <div className="am-metrics-grid">
-              <MetricTile label="Searches Today"            value={stats.todaySearches} />
-              <MetricTile label="Views Today"               value={stats.todayViews} />
-              <MetricTile label="Active Users Today"        value={stats.activeToday} />
-              <MetricTile label="Avg Daily Active Users"    value={stats.avgDailyUsers} />
-              <MetricTile
-                label="Searches This Week"
-                value={stats.thisWeekS}
-                trend={stats.weekTrend}
-                trendLabel={stats.weekTrend !== null ? `${Math.abs(stats.weekTrend)}% vs last week` : null}
-              />
-              <MetricTile
-                label="Views This Week"
-                value={stats.thisWeekV}
-                trend={stats.viewTrend}
-                trendLabel={stats.viewTrend !== null ? `${Math.abs(stats.viewTrend)}% vs last week` : null}
-              />
-              <MetricTile label="Avg Daily Searches (30d)"     value={stats.avgDailySearches} />
-              <MetricTile label="Avg Searches / User / Day"    value={stats.avgPerUser} />
-              <MetricTile label="Active Users This Week"       value={stats.activeThisWeek} />
-              <MetricTile
-                label="New Users This Week"
-                value={stats.newUsersThisWeek}
-                trend={stats.newUsersThisWeek > 0 ? 1 : 0}
-                trendLabel={stats.newUsersThisWeek > 0 ? "joined this week" : null}
-              />
+            {/* Today at a glance — no boxes, just a text strip */}
+            <div className="am-today-strip">
+              <span className="am-today-label">Today</span>
+              <span><b>{stats.todaySearches}</b> searches</span>
+              <span className="am-today-sep">·</span>
+              <span><b>{stats.todayViews}</b> word views</span>
+              <span className="am-today-sep">·</span>
+              <span><b>{stats.activeToday}</b> active users</span>
+              <span className="am-today-sep">·</span>
+              <span><b>{stats.todayDownloads}</b> downloads</span>
+              <span className="am-today-sep">·</span>
+              <span><b>{stats.todayPV}</b> page views</span>
             </div>
 
-            {/* Activity chart */}
+            {/* Activity */}
             <div className="am-section-card">
-              <div className="am-section-header">
+              <div className="am-section-head">
                 <div>
                   <h2 className="am-section-title">Activity</h2>
-                  <div className="am-chart-legend">
+                  <div className="am-section-legend">
                     <span className="am-legend-dot" style={{ background: "#3b82f6" }} />Searches
-                    <span className="am-legend-dot" style={{ background: "#10b981" }} />Views
+                    <span className="am-legend-dot" style={{ background: "#10b981" }} />Word views
                   </div>
                 </div>
                 <div className="chart-timeframe-toggle">
@@ -432,30 +406,52 @@ export default function AdminMonitor() {
                   <button className={`chart-timeframe-btn${chartView === "weeks" ? " active" : ""}`} onClick={() => setChartView("weeks")}>Weeks</button>
                 </div>
               </div>
-              <DualLineChart data={chartData} />
-            </div>
-
-            {/* Downloads section */}
-            <div className="am-section-card">
-              <div className="am-section-header">
-                <div>
-                  <h2 className="am-section-title">Snippet Downloads</h2>
-                  <div className="am-chart-legend">
-                    <span className="am-legend-dot" style={{ background: "#10b981" }} />Downloads
-                    <span className="am-legend-dot" style={{ background: "#3b82f6" }} />Page views
-                  </div>
+              <div className="am-stat-row" style={{ gridTemplateColumns: "repeat(4, 1fr)" }}>
+                <div className="am-stat-item">
+                  <span className="am-stat-value">{stats.thisWeekS}</span>
+                  <span className="am-stat-label">Searches this week</span>
+                  <Trend value={stats.weekTrend} />
+                </div>
+                <div className="am-stat-item">
+                  <span className="am-stat-value">{stats.avgDailySearches}</span>
+                  <span className="am-stat-label">Avg daily (30d)</span>
+                </div>
+                <div className="am-stat-item">
+                  <span className="am-stat-value">{stats.activeThisWeek}</span>
+                  <span className="am-stat-label">Active users this week</span>
+                </div>
+                <div className="am-stat-item">
+                  <span className="am-stat-value">{stats.newUsersThisWeek}</span>
+                  <span className="am-stat-label">New users this week</span>
                 </div>
               </div>
-              <div className="am-metrics-grid" style={{ marginBottom: "0.5rem" }}>
-                <MetricTile label="Downloads Today"        value={stats.todayDownloads} />
-                <MetricTile label="Downloads This Week"    value={stats.thisWeekDl}
-                  trend={stats.dlWeekTrend}
-                  trendLabel={stats.dlWeekTrend !== null ? `${Math.abs(stats.dlWeekTrend)}% vs last week` : null}
-                />
-                <MetricTile label="Avg Daily Downloads (30d)" value={stats.avgDailyDownloads} />
+              <div className="am-chart-wrap">
+                <DualLineChart data={chartData} />
+              </div>
+            </div>
+
+            {/* Downloads */}
+            <div className="am-section-card">
+              <div className="am-section-head">
+                <h2 className="am-section-title">Snippet Downloads</h2>
+              </div>
+              <div className="am-stat-row" style={{ gridTemplateColumns: "repeat(3, 1fr)" }}>
+                <div className="am-stat-item">
+                  <span className="am-stat-value">{stats.thisWeekDl}</span>
+                  <span className="am-stat-label">This week</span>
+                  <Trend value={stats.dlWeekTrend} />
+                </div>
+                <div className="am-stat-item">
+                  <span className="am-stat-value">{stats.avgDailyDownloads}</span>
+                  <span className="am-stat-label">Avg daily (30d)</span>
+                </div>
+                <div className="am-stat-item">
+                  <span className="am-stat-value">{stats.totalDownloads.toLocaleString()}</span>
+                  <span className="am-stat-label">All time</span>
+                </div>
               </div>
               {stats.topDownloaded.length > 0 && (
-                <>
+                <div className="am-section-body">
                   <p className="am-section-sub">Most downloaded words</p>
                   <div className="am-top-words">
                     {stats.topDownloaded.map(({ word, count }, i) => (
@@ -469,16 +465,16 @@ export default function AdminMonitor() {
                       </div>
                     ))}
                   </div>
-                </>
+                </div>
               )}
             </div>
 
-            {/* Page views section */}
+            {/* Page Views */}
             <div className="am-section-card">
-              <div className="am-section-header">
+              <div className="am-section-head">
                 <div>
                   <h2 className="am-section-title">Page Views</h2>
-                  <div className="am-chart-legend">
+                  <div className="am-section-legend">
                     <span className="am-legend-dot" style={{ background: "#f472b6" }} />Page views
                     <span className="am-legend-dot" style={{ background: "#10b981" }} />Downloads
                   </div>
@@ -488,23 +484,32 @@ export default function AdminMonitor() {
                   <button className={`chart-timeframe-btn${pvChartView === "weeks" ? " active" : ""}`} onClick={() => setPvChartView("weeks")}>Weeks</button>
                 </div>
               </div>
-              <div className="am-metrics-grid" style={{ marginBottom: "0.5rem" }}>
-                <MetricTile label="Page Views Today"        value={stats.todayPV} />
-                <MetricTile label="Page Views This Week"    value={stats.thisWeekPV}
-                  trend={stats.pvWeekTrend}
-                  trendLabel={stats.pvWeekTrend !== null ? `${Math.abs(stats.pvWeekTrend)}% vs last week` : null}
-                />
-                <MetricTile label="Avg Daily Page Views (30d)" value={stats.avgDailyPV} />
+              <div className="am-stat-row" style={{ gridTemplateColumns: "repeat(3, 1fr)" }}>
+                <div className="am-stat-item">
+                  <span className="am-stat-value">{stats.thisWeekPV}</span>
+                  <span className="am-stat-label">This week</span>
+                  <Trend value={stats.pvWeekTrend} />
+                </div>
+                <div className="am-stat-item">
+                  <span className="am-stat-value">{stats.avgDailyPV}</span>
+                  <span className="am-stat-label">Avg daily (30d)</span>
+                </div>
+                <div className="am-stat-item">
+                  <span className="am-stat-value">{stats.totalPV.toLocaleString()}</span>
+                  <span className="am-stat-label">All time</span>
+                </div>
               </div>
-              <DualLineChart data={pvChartData} />
+              <div className="am-chart-wrap">
+                <DualLineChart data={pvChartData} />
+              </div>
               {stats.topPages.length > 0 && (
-                <>
-                  <p className="am-section-sub" style={{ marginTop: "0.5rem" }}>Most visited pages</p>
+                <div className="am-section-body">
+                  <p className="am-section-sub">Most visited pages</p>
                   <div className="am-top-words">
                     {stats.topPages.map(({ path, count }, i) => (
                       <div key={path} className="am-top-word-row">
                         <span className="am-top-word-rank">#{i + 1}</span>
-                        <span className="am-top-word-name" style={{ color: "var(--text-2)" }}>{path}</span>
+                        <span className="am-top-word-name" style={{ color: "var(--text-2)", textTransform: "none" }}>{path}</span>
                         <div className="am-top-word-bar-track">
                           <div className="am-top-word-bar" style={{ width: `${(count / topPvMax) * 100}%`, background: "#f472b6" }} />
                         </div>
@@ -512,26 +517,32 @@ export default function AdminMonitor() {
                       </div>
                     ))}
                   </div>
-                </>
+                </div>
               )}
             </div>
 
-            {/* Top words */}
+            {/* Top searched words */}
             <div className="am-section-card">
-              <h2 className="am-section-title">Top 10 Searched Words</h2>
-              <div className="am-top-words">
+              <div className="am-section-head">
+                <h2 className="am-section-title">Top 10 Searched Words</h2>
+              </div>
+              <div className="am-section-body" style={{ paddingTop: 0 }}>
                 {stats.topWords.length === 0 ? (
-                  <p className="af-empty">No search data yet.</p>
-                ) : stats.topWords.map(({ word, count }, i) => (
-                  <div key={word} className="am-top-word-row">
-                    <span className="am-top-word-rank">#{i + 1}</span>
-                    <Link to={`/word/${encodeURIComponent(word)}`} className="am-top-word-name">{word}</Link>
-                    <div className="am-top-word-bar-track">
-                      <div className="am-top-word-bar" style={{ width: `${(count / topMax) * 100}%` }} />
-                    </div>
-                    <span className="am-top-word-count">{count}</span>
+                  <p style={{ fontSize: "13px", color: "var(--text-3)", margin: 0 }}>No search data yet.</p>
+                ) : (
+                  <div className="am-top-words">
+                    {stats.topWords.map(({ word, count }, i) => (
+                      <div key={word} className="am-top-word-row">
+                        <span className="am-top-word-rank">#{i + 1}</span>
+                        <Link to={`/word/${encodeURIComponent(word)}`} className="am-top-word-name">{word}</Link>
+                        <div className="am-top-word-bar-track">
+                          <div className="am-top-word-bar" style={{ width: `${(count / topMax) * 100}%` }} />
+                        </div>
+                        <span className="am-top-word-count">{count}</span>
+                      </div>
+                    ))}
                   </div>
-                ))}
+                )}
               </div>
             </div>
 

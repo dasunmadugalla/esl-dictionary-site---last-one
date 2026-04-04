@@ -56,16 +56,30 @@ function Search_result() {
         fetch(`https://api.datamuse.com/words?sl=${encodeURIComponent(search)}&max=10`),
       ]);
       const [spData, slData] = await Promise.all([spRes.json(), slRes.json()]);
+
+      // deduplicate candidates
       const seen = new Set();
-      const merged = [];
+      const candidates = [];
       for (const w of [...spData, ...slData]) {
         if (!seen.has(w.word)) {
           seen.add(w.word);
-          merged.push(w.word);
+          candidates.push(w.word);
         }
-        if (merged.length === 5) break;
       }
-      return merged;
+
+      // validate each candidate against Free Dictionary API in parallel
+      const results = await Promise.all(
+        candidates.map(async (word) => {
+          try {
+            const r = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`);
+            return r.status === 200 ? word : null;
+          } catch {
+            return null;
+          }
+        })
+      );
+
+      return results.filter(Boolean).slice(0, 5);
     },
     enabled: !!search && error?.status === 404,
     staleTime: 5 * 60 * 1000,

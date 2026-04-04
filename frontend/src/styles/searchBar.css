@@ -13,7 +13,7 @@
   border-radius: 10px;
   border: 1px solid var(--border);
   background: var(--bg-card);
-  color: var(--text-2);
+  color: #3b82f6;
   font-size: 20px;
   display: flex;
   align-items: center;
@@ -28,21 +28,6 @@
   color: #fff;
   border-color: rgb(37, 99, 235);
   transform: rotate(20deg);
-}
-
-@keyframes btn-wiggle {
-  0%   { transform: rotate(0deg) translateY(0);    background: var(--bg-card);      color: var(--text-2);  border-color: var(--border); }
-  15%  { transform: rotate(-15deg) translateY(-3px); background: rgb(37, 99, 235);  color: #fff;           border-color: rgb(37, 99, 235); }
-  30%  { transform: rotate(15deg) translateY(-5px);  background: rgb(99, 37, 235);  color: #fff;           border-color: rgb(99, 37, 235); }
-  45%  { transform: rotate(-10deg) translateY(-2px); background: rgb(37, 99, 235);  color: #fff;           border-color: rgb(37, 99, 235); }
-  60%  { transform: rotate(10deg) translateY(-4px);  background: rgb(99, 37, 235);  color: #fff;           border-color: rgb(99, 37, 235); }
-  75%  { transform: rotate(-6deg) translateY(-1px);  background: rgb(37, 99, 235);  color: #fff;           border-color: rgb(37, 99, 235); }
-  90%  { transform: rotate(6deg) translateY(-2px);   background: rgb(99, 37, 235);  color: #fff;           border-color: rgb(99, 37, 235); }
-  100% { transform: rotate(0deg) translateY(0);    background: var(--bg-card);      color: var(--text-2);  border-color: var(--border); }
-}
-
-.random-icon-btn--wiggle {
-  animation: btn-wiggle 0.6s ease;
 }
 
 .searchbar-wrapper {
@@ -118,9 +103,14 @@ button.search-submit-btn:hover {
   stroke-width: 2.75px;
 }
 .suggestions-wrapper {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 50;
   background-color: var(--bg-card);
   list-style: none;
-  border-radius: 0px 0px 10px 10px;
+  border-radius: 0 0 10px 10px;
   width: 100%;
   border: 1px solid var(--border);
   box-shadow:
