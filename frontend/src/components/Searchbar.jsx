@@ -38,39 +38,8 @@ function Searchbar({ externalInputRef } = {}) {
   const normalizeWord = (word) =>
     word.trim().toLowerCase().replace(/[-_]+/g, " ").replace(/\s+/g, " ");
 
-  // Validate with Datamuse before hitting backend
-  const validateWord = async (word) => {
-    try {
-      const res = await fetch(
-        `https://api.datamuse.com/words?sp=${normalizeWord(word)}&max=5`
-      );
-      const data = await res.json();
-      return data.some((w) => w.word.toLowerCase() === normalizeWord(word));
-    } catch (err) {
-      console.error("Datamuse validation failed:", err);
-      return true; // fallback: assume valid if API fails
-    }
-  };
-
-  const handleSearch = async (value = search_value) => {
+  const handleSearch = (value = search_value) => {
     if (!value.trim()) return;
-
-    // Validate before calling backend
-    const isValid = await validateWord(value);
-    if (!isValid) {
-      // show suggestions from Datamuse
-      try {
-        const sugRes = await fetch(
-          `https://api.datamuse.com/sug?s=${normalizeWord(value)}`
-        );
-        const sugData = await sugRes.json();
-        setSuggestions(sugData.slice(0, 5));
-        setActiveIndex(-1);
-      } catch (err) {
-        console.error("Datamuse suggestions failed:", err);
-      }
-      return;
-    }
 
     // Navigate to word page — flag so Search_result knows it came from a search
     navigate(`/word/${encodeURIComponent(normalizeWord(value))}`, { state: { fromSearch: true } });
