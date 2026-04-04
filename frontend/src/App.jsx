@@ -50,10 +50,10 @@ function App() {
         <Footer />
       </div>
 
-      <button className="theme-toggle-btn" onClick={toggle} aria-label="Toggle theme">
-        {theme === "dark"
-          ? <TbSunHigh key="sun" className="theme-toggle-icon" />
-          : <TbMoonStars key="moon" className="theme-toggle-icon" />}
+      <button className={`theme-toggle-switch${theme === "dark" ? " is-dark" : ""}`} onClick={toggle} aria-label="Toggle theme">
+        <TbSunHigh className="theme-toggle-switch-icon theme-toggle-switch-sun" />
+        <TbMoonStars className="theme-toggle-switch-icon theme-toggle-switch-moon" />
+        <span className="theme-toggle-switch-thumb" />
       </button>
 
       <StreakBadge />
