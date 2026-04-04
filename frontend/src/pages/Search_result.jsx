@@ -1,4 +1,5 @@
 import React, { useContext } from "react";
+import { Helmet } from "react-helmet-async";
 import { TbArrowLeft } from "react-icons/tb";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -140,16 +141,32 @@ function Search_result() {
     return <Word_container details={searchResult} />;
   };
 
+  const capitalised = search
+    ? search.charAt(0).toUpperCase() + search.slice(1).toLowerCase()
+    : "";
+
+  const metaDescription = searchResult
+    ? `${capitalised} — ${searchResult.meanings?.[0]?.definition ?? "Look up the definition, examples, and more on Grasperr."}`
+    : `Look up "${capitalised}" on Grasperr — the ESL dictionary built for English learners.`;
+
   return (
-    <div className="search-result-page">
-      <div className="middle-container">
-        <div className="input-wrapper">
-          <Searchbar />
+    <>
+      <Helmet>
+        <title>{capitalised ? `${capitalised} - Grasperr Dictionary` : "Grasperr"}</title>
+        <meta name="description" content={metaDescription} />
+        <meta property="og:title" content={`${capitalised} - Grasperr Dictionary`} />
+        <meta property="og:description" content={metaDescription} />
+      </Helmet>
+      <div className="search-result-page">
+        <div className="middle-container">
+          <div className="input-wrapper">
+            <Searchbar />
+          </div>
+          {renderContent()}
         </div>
-        {renderContent()}
+        {!isLoading && <Recently_viewed />}
       </div>
-      {!isLoading && <Recently_viewed />}
-    </div>
+    </>
   );
 }
 
