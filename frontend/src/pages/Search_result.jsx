@@ -38,6 +38,7 @@ function Search_result() {
       const headers = token ? { Authorization: `Bearer ${token}` } : {};
       const res = await fetch(`${ip}/word/${encodeURIComponent(search)}`, { headers });
 
+      if (res.status === 404) throw new Error(`"${search}" doesn't appear to be a valid English word.`);
       if (!res.ok) throw new Error(`Server error: ${res.status}`);
       return res.json();
     },

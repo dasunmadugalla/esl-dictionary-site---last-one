@@ -100,10 +100,10 @@ export default function Settings() {
     if (words.length === 0) { setExportLoading(false); return; }
 
     const { data: wordRows } = await supabase
-      .from("Words").select("word, frequency, complexity").in("word", words);
+      .from("Words").select("word, frequency").in("word", words);
 
-    const rows = ["Word,Frequency,Complexity", ...(wordRows || []).map((w) =>
-      `${w.word},${w.frequency || ""},${w.complexity || ""}`
+    const rows = ["Word,Frequency", ...(wordRows || []).map((w) =>
+      `${w.word},${w.frequency || ""}`
     )];
     const blob = new Blob([rows.join("\n")], { type: "text/csv" });
     const url = URL.createObjectURL(blob);

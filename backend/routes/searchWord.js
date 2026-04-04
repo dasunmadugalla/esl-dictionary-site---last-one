@@ -83,7 +83,6 @@ router.get("/:search", wordLookupLimiter, optionalAuth, async (req, res) => {
         syllables: existing.syllables ?? "",
         frequency: existing.frequency ?? "",
         usage_by_context: existing.usage_by_context ?? {},
-        complexity: existing.complexity ?? "",
         meanings: existing.definitions ?? [],
         technical_definition: existing.technical_definition
           ? {
@@ -102,7 +101,20 @@ router.get("/:search", wordLookupLimiter, optionalAuth, async (req, res) => {
       return res.json(resultFromDb);
     }
 
-    // 2) NOT FOUND → CALL OPENAI (unchanged prompt + behavior)
+    // 2) VALIDATE WORD IS REAL (Free Dictionary API)
+    try {
+      const dictRes = await fetch(
+        `https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(normalized)}`
+      );
+      if (dictRes.status === 404) {
+        return res.status(404).json({ error: "Word not found" });
+      }
+    } catch (dictErr) {
+      console.error("Dictionary API error:", dictErr);
+      // If the validation API is unreachable, fall through to OpenAI rather than blocking all lookups
+    }
+
+    // 3) NOT FOUND → CALL OPENAI (unchanged prompt + behavior)
 
     const completion = await client.chat.completions.create({
       model: "gpt-4.1-mini",
@@ -153,33 +165,24 @@ Follow these rules strictly:
 4. Synonyms and antonyms should be relevant to that meaning.
 5. If none exist, return an empty array [].
 6. Frequency must be one of: essential (must-know, used constantly), common (everyday words, most people know), intermediate (used in books and news), advanced (formal and academic writing), rare (exists but barely used)
-7. technical_definition should ONLY be filled for words that have a strict, established 
-   definition in a specific academic or scientific field — such as scientific terms 
-   (photosynthesis, osmosis, entropy), mathematical terms (integer, asymptote), 
-   medical terms (hypertension, neuron), legal terms (plaintiff, jurisdiction), or 
+7. technical_definition should ONLY be filled for words that have a strict, established
+   definition in a specific academic or scientific field — such as scientific terms
+   (photosynthesis, osmosis, entropy), mathematical terms (integer, asymptote),
+   medical terms (hypertension, neuron), legal terms (plaintiff, jurisdiction), or
    programming terms (recursion, algorithm).
-   
-   Do NOT fill this for everyday words, objects, or general vocabulary — even if they 
-   can be described technically. Examples of words that should have EMPTY 
+
+   Do NOT fill this for everyday words, objects, or general vocabulary — even if they
+   can be described technically. Examples of words that should have EMPTY
    technical_definition: car, house, run, break, beautiful, fast.
-   
+
    If the word does not belong to a specific academic discipline, leave both fields as "".
 
-8. Word complexity MUST follow this CEFR rule:
+8. complexity must always be "" (empty string). Do not fill this field.
 
-A1 → extremely common everyday words  
-A2 → very common daily vocabulary  
-B1 → intermediate words used in normal conversation  
-B2 → advanced words used in educated conversation  
-C1 → rare or academic words  
-C2 → highly rare or specialized words
-
-Choose the most appropriate level and be consistent.
-
-9. Synonyms and antonyms should be strictly textbook synonyms and antonyms which are 100% correct. If there are no textbook synonyms, antonyms or any related words to that particular word leave those fields empty.
+9. Synonyms and antonyms must be strict textbook synonyms and antonyms only — words that are taught as direct substitutes in grammar/vocabulary textbooks. Do NOT include words that are merely related in meaning or concept. If no true textbook synonym or antonym exists, return an empty array [].
 10. For word_family, provide the other grammatical forms of the word (noun, verb, adjective, adverb). Only include forms that genuinely exist. Use "" for any form that does not exist. Example: for "beautiful" → noun: "beauty", verb: "beautify", adjective: "beautiful", adverb: "beautifully". For a word like "the" that has no other forms, all fields should be "".
 11. register must be exactly one of: formal, informal, slang, academic, neutral, literary — pick the single most accurate one for how this word is typically used.
-12. memory_tip: a single vivid one-liner that helps an ESL learner remember the word. Use a comparison, analogy, or image. Maximum 20 words. Example: "Think of 'ephemeral' like a soap bubble — beautiful but gone in seconds."
+12. memory_tip: ONLY generate a memory tip for words that are genuinely difficult, uncommon, or hard to remember — such as intermediate, advanced, or rare vocabulary (e.g. ephemeral, ambiguous, tenacious). Do NOT generate a memory tip for simple, everyday words that any beginner already knows (e.g. apple, mother, house, run, happy, water). For simple words, return "".
 13. real_world_context: one specific sentence describing where or when someone would actually encounter or use this word. Be concrete and relatable. Example: "You'd hear this word in news articles about politics or in formal business meetings."
 
 Return JSON in this exact format (DO NOT change the structure):
@@ -249,7 +252,6 @@ Return JSON in this exact format (DO NOT change the structure):
         phonetic: parsed.phonetic ?? "",
         syllables: parsed.syllables ?? "",
         frequency: parsed.frequency ?? "",
-        complexity: parsed.complexity ?? "",
         usage_by_context: parsed.usage_by_context ?? {},
         technical_definition: {
           subject: parsed.technical_definition?.subject || "",

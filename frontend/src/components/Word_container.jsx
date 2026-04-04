@@ -331,9 +331,6 @@ function Word_container({ details: searchResult = {} }) {
               {searchResult.frequency && (
                 <span className="lexical-badge">{searchResult.frequency}</span>
               )}
-              {searchResult.complexity && (
-                <span className="lexical-badge">{searchResult.complexity}</span>
-              )}
               {searchResult.register && (
                 <span className={`lexical-badge register-badge register-badge--${searchResult.register}`}>
                   {searchResult.register}

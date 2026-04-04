@@ -48,8 +48,7 @@ function Word_snippet({ data }) {
         {/* ── Footer ── */}
         <div className="ws-footer">
           <div className="ws-footer-badges">
-            {data.frequency  && <span className="ws-badge ws-badge--freq">{data.frequency}</span>}
-            {data.complexity && <span className="ws-badge ws-badge--complex">{data.complexity}</span>}
+            {data.frequency && <span className="ws-badge ws-badge--freq">{data.frequency}</span>}
           </div>
           <span className="ws-footer-site">grasperr.com</span>
         </div>
