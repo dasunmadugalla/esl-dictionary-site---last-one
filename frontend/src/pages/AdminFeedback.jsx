@@ -8,8 +8,7 @@ import {
 } from "react-icons/tb";
 import "../styles/adminFeedback.css";
 
-// ── Put your admin email(s) here ────────────────────────────
-const ADMIN_EMAILS = ["dasunsucharith2002@gmail.com"];
+const ADMIN_EMAILS = import.meta.env.VITE_ADMIN_EMAILS?.split(",").map((e) => e.trim()) ?? [];
 
 const TYPE_META = {
   suggestion:  { label: "Suggestion",  icon: <TbBulb />,          color: "var(--af-blue)"   },
