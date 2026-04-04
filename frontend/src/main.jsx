@@ -38,6 +38,7 @@ const Collections   = lazy(() => import("./pages/Collections.jsx"));
 const CollectionPage = lazy(() => import("./pages/CollectionPage.jsx"));
 const SearchHistory  = lazy(() => import("./pages/SearchHistory.jsx"));
 const AdminFeedback  = lazy(() => import("./pages/AdminFeedback.jsx"));
+const AdminMonitor   = lazy(() => import("./pages/AdminMonitor.jsx"));
 const Feedback       = lazy(() => import("./pages/Feedback.jsx"));
 const About          = lazy(() => import("./pages/About.jsx"));
 const Contact        = lazy(() => import("./pages/Contact.jsx"));
@@ -58,6 +59,7 @@ const router = createBrowserRouter([
       { path: "/settings", element: <ProtectedRoute><Suspense fallback={<Loader />}><Settings /></Suspense></ProtectedRoute> },
       { path: "/history", element: <ProtectedRoute><Suspense fallback={<Loader />}><SearchHistory /></Suspense></ProtectedRoute> },
       { path: "/admin/feedback",  element: <ProtectedRoute><Suspense fallback={<Loader />}><AdminFeedback /></Suspense></ProtectedRoute> },
+      { path: "/admin/monitor",   element: <ProtectedRoute><Suspense fallback={<Loader />}><AdminMonitor /></Suspense></ProtectedRoute> },
       { path: "/feedback",        element: <ProtectedRoute><Suspense fallback={<Loader />}><Feedback /></Suspense></ProtectedRoute> },
       { path: "/about",           element: <Suspense fallback={<Loader />}><About /></Suspense> },
       { path: "/contact",         element: <Suspense fallback={<Loader />}><Contact /></Suspense> },
