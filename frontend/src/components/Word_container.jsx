@@ -421,7 +421,7 @@ function Word_container({ details: searchResult = {} }) {
             </button>
             {showSnippet && (
               <Url_snippet
-                url={`www.dictionary.com${location.pathname}`}
+                url={`www.grasperr.com${location.pathname}`}
                 visible={showSnippet}
               />
             )}
