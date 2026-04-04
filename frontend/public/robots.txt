@@ -10,4 +10,4 @@ Disallow: /collections
 Disallow: /bookmarks
 Disallow: /feedback
 
-Sitemap: https://grasperr.com/sitemap.xml
+Sitemap: https://api.grasperr.com/sitemap.xml
