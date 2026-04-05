@@ -11,7 +11,7 @@ import {
 const ADMIN_EMAILS = import.meta.env.VITE_ADMIN_EMAILS?.split(",").map(e => e.trim()) ?? [];
 
 // ── Dual-line SVG chart ──────────────────────────────────────────
-function DualLineChart({ data }) {
+function DualLineChart({ data, color1 = "#3b82f6", color2 = "#10b981" }) {
   const [hovered, setHovered] = useState(null);
   const VW = 600, VH = 220, padX = 28, padTop = 28, padBottom = 44;
   const chartH = VH - padTop - padBottom;
@@ -48,19 +48,19 @@ function DualLineChart({ data }) {
     <svg viewBox={`0 0 ${VW} ${VH}`} width="100%" className="am-chart-svg">
       <defs>
         <linearGradient id="am-sg" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.13" />
-          <stop offset="100%" stopColor="#3b82f6" stopOpacity="0" />
+          <stop offset="0%" stopColor={color1} stopOpacity="0.13" />
+          <stop offset="100%" stopColor={color1} stopOpacity="0" />
         </linearGradient>
         <linearGradient id="am-vg" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#10b981" stopOpacity="0.1" />
-          <stop offset="100%" stopColor="#10b981" stopOpacity="0" />
+          <stop offset="0%" stopColor={color2} stopOpacity="0.1" />
+          <stop offset="100%" stopColor={color2} stopOpacity="0" />
         </linearGradient>
       </defs>
 
       <path d={makeArea(sPts)} fill="url(#am-sg)" />
       <path d={makeArea(vPts)} fill="url(#am-vg)" />
-      <path d={makeLine(sPts)} fill="none" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-      <path d={makeLine(vPts)} fill="none" stroke="#10b981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d={makeLine(sPts)} fill="none" stroke={color1} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d={makeLine(vPts)} fill="none" stroke={color2} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
 
       {sPts.map((sp, i) => {
         const vp = vPts[i];
@@ -72,15 +72,15 @@ function DualLineChart({ data }) {
             {isHov && (
               <>
                 <line x1={sp.x} y1={padTop} x2={sp.x} y2={padTop + chartH} stroke="var(--border)" strokeWidth="1" strokeDasharray="3 3" />
-                <rect x={sp.x - 22} y={sp.y - 26} width={44} height={18} rx={4} fill="#3b82f6" />
+                <rect x={sp.x - 22} y={sp.y - 26} width={44} height={18} rx={4} fill={color1} />
                 <text x={sp.x} y={sp.y - 13} textAnchor="middle" fill="#fff" fontSize="10" fontWeight="700">{sp.val}</text>
-                <rect x={vp.x - 22} y={vp.y - 26} width={44} height={18} rx={4} fill="#10b981" />
+                <rect x={vp.x - 22} y={vp.y - 26} width={44} height={18} rx={4} fill={color2} />
                 <text x={vp.x} y={vp.y - 13} textAnchor="middle" fill="#fff" fontSize="10" fontWeight="700">{vp.val}</text>
               </>
             )}
 
-            <circle cx={sp.x} cy={sp.y} r={isHov ? 5 : 3} fill="#3b82f6" />
-            <circle cx={vp.x} cy={vp.y} r={isHov ? 5 : 3} fill="#10b981" />
+            <circle cx={sp.x} cy={sp.y} r={isHov ? 5 : 3} fill={color1} />
+            <circle cx={vp.x} cy={vp.y} r={isHov ? 5 : 3} fill={color2} />
 
             {sp.showLabel && (
               <text x={sp.x} y={VH - 6} textAnchor="middle" fill="var(--text-muted)" fontSize="10">{sp.label}</text>
@@ -120,10 +120,12 @@ export default function AdminMonitor() {
   const [searches, setSearches]           = useState([]);
   const [downloads, setDownloads]         = useState([]);
   const [pageViews, setPageViews]         = useState([]);
+  const [lookups, setLookups]             = useState([]);
   const [wordCount, setWordCount]         = useState(0);
   const [feedbackCount, setFeedbackCount] = useState(0);
   const [chartView, setChartView]         = useState("days");
   const [pvChartView, setPvChartView]     = useState("days");
+  const [luChartView, setLuChartView]     = useState("days");
 
   async function load() {
     setLoading(true);
@@ -131,18 +133,21 @@ export default function AdminMonitor() {
       { data: sData },
       { data: dlData },
       { data: pvData },
+      { data: luData },
       { count: wCount },
       { count: fCount },
     ] = await Promise.all([
       supabase.from("searches").select("email, word, created_at, type").order("created_at", { ascending: false }),
       supabase.from("downloads").select("email, word, created_at").order("created_at", { ascending: false }),
       supabase.from("page_views").select("email, path, created_at").order("created_at", { ascending: false }),
+      supabase.from("word_lookups").select("word, source, created_at").order("created_at", { ascending: false }),
       supabase.from("Words").select("*", { count: "exact", head: true }),
       supabase.from("Feedback").select("*", { count: "exact", head: true }),
     ]);
     setSearches(sData || []);
     setDownloads(dlData || []);
     setPageViews(pvData || []);
+    setLookups(luData || []);
     setWordCount(wCount || 0);
     setFeedbackCount(fCount || 0);
     setLastRefreshed(new Date());
@@ -233,6 +238,14 @@ export default function AdminMonitor() {
     pageViews.forEach(p => { ppc[p.path] = (ppc[p.path] || 0) + 1; });
     const topPages = Object.entries(ppc).sort((a, b) => b[1] - a[1]).slice(0, 8).map(([path, count]) => ({ path, count }));
 
+    // ── Word lookups ──────────────────────────────────────────
+    const dbHits   = lookups.filter(l => l.source === "db");
+    const apiGens  = lookups.filter(l => l.source === "api");
+    const todayDbHits  = dbHits.filter(l => l.created_at.slice(0, 10) === today).length;
+    const todayApiGens = apiGens.filter(l => l.created_at.slice(0, 10) === today).length;
+    const thisWeekDb  = dbHits.filter(l => new Date(l.created_at) >= startThisWeek).length;
+    const thisWeekApi = apiGens.filter(l => new Date(l.created_at) >= startThisWeek).length;
+
     return {
       totalUsers, totalSearches: allSearches.length, totalViews: allViews.length,
       todaySearches, todayViews, activeToday,
@@ -243,8 +256,10 @@ export default function AdminMonitor() {
       totalDownloads: downloads.length,
       todayPV, thisWeekPV, avgDailyPV, pvWeekTrend, topPages,
       totalPV: pageViews.length,
+      totalDbHits: dbHits.length, totalApiGens: apiGens.length,
+      todayDbHits, todayApiGens, thisWeekDb, thisWeekApi,
     };
-  }, [searches, downloads, pageViews]);
+  }, [searches, downloads, pageViews, lookups]);
 
   // ── Chart data ───────────────────────────────────────────────
   const chartData = useMemo(() => {
@@ -309,6 +324,38 @@ export default function AdminMonitor() {
       };
     });
   }, [pageViews, downloads, pvChartView]);
+
+  // ── Lookup chart data ───────────────────────────────────────
+  const luChartData = useMemo(() => {
+    const now = new Date();
+    if (luChartView === "days") {
+      return Array.from({ length: 30 }, (_, i) => {
+        const d = new Date(now);
+        d.setDate(now.getDate() - (29 - i));
+        const ds = d.toISOString().slice(0, 10);
+        return {
+          label: d.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+          searches: lookups.filter(l => l.source === "db"  && l.created_at.slice(0, 10) === ds).length,
+          views:    lookups.filter(l => l.source === "api" && l.created_at.slice(0, 10) === ds).length,
+          showLabel: i % 6 === 0 || i === 29,
+        };
+      });
+    }
+    const dow = now.getDay();
+    const sow = new Date(now);
+    sow.setDate(now.getDate() - (dow === 0 ? 6 : dow - 1));
+    sow.setHours(0, 0, 0, 0);
+    return Array.from({ length: 12 }, (_, i) => {
+      const ws = new Date(sow); ws.setDate(sow.getDate() - (11 - i) * 7);
+      const we = new Date(ws); we.setDate(ws.getDate() + 7);
+      return {
+        label: ws.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+        searches: lookups.filter(l => l.source === "db"  && new Date(l.created_at) >= ws && new Date(l.created_at) < we).length,
+        views:    lookups.filter(l => l.source === "api" && new Date(l.created_at) >= ws && new Date(l.created_at) < we).length,
+        showLabel: true,
+      };
+    });
+  }, [lookups, luChartView]);
 
   const topMax   = stats.topWords[0]?.count    || 1;
   const topDlMax = stats.topDownloaded[0]?.count || 1;
@@ -427,6 +474,44 @@ export default function AdminMonitor() {
               </div>
               <div className="am-chart-wrap">
                 <DualLineChart data={chartData} />
+              </div>
+            </div>
+
+            {/* DB vs API lookups */}
+            <div className="am-section-card">
+              <div className="am-section-head">
+                <div>
+                  <h2 className="am-section-title">DB Cache vs AI Generations</h2>
+                  <div className="am-section-legend">
+                    <span className="am-legend-dot" style={{ background: "#3b82f6" }} />DB hits
+                    <span className="am-legend-dot" style={{ background: "#f59e0b" }} />API generations
+                  </div>
+                </div>
+                <div className="chart-timeframe-toggle">
+                  <button className={`chart-timeframe-btn${luChartView === "days"  ? " active" : ""}`} onClick={() => setLuChartView("days")}>Days</button>
+                  <button className={`chart-timeframe-btn${luChartView === "weeks" ? " active" : ""}`} onClick={() => setLuChartView("weeks")}>Weeks</button>
+                </div>
+              </div>
+              <div className="am-stat-row" style={{ gridTemplateColumns: "repeat(4, 1fr)" }}>
+                <div className="am-stat-item">
+                  <span className="am-stat-value">{stats.totalDbHits.toLocaleString()}</span>
+                  <span className="am-stat-label">Total DB hits</span>
+                </div>
+                <div className="am-stat-item">
+                  <span className="am-stat-value">{stats.totalApiGens.toLocaleString()}</span>
+                  <span className="am-stat-label">Total API generations</span>
+                </div>
+                <div className="am-stat-item">
+                  <span className="am-stat-value">{stats.todayDbHits} / {stats.todayApiGens}</span>
+                  <span className="am-stat-label">Today DB / API</span>
+                </div>
+                <div className="am-stat-item">
+                  <span className="am-stat-value">{stats.thisWeekDb} / {stats.thisWeekApi}</span>
+                  <span className="am-stat-label">This week DB / API</span>
+                </div>
+              </div>
+              <div className="am-chart-wrap">
+                <DualLineChart data={luChartData} color1="#3b82f6" color2="#f59e0b" />
               </div>
             </div>
 

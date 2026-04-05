@@ -98,6 +98,9 @@ router.get("/:search", wordLookupLimiter, optionalAuth, async (req, res) => {
         bookmarked: isBookmarked,
       };
 
+      // Track DB hit (fire-and-forget)
+      supabase.from("word_lookups").insert({ word: normalized, source: "db" }).then(() => {});
+
       return res.json(resultFromDb);
     }
 
@@ -281,6 +284,9 @@ Return JSON in this exact format (DO NOT change the structure):
     } catch (dbErr) {
       console.error("Failed saving to DB:", dbErr);
     }
+
+    // Track API generation (fire-and-forget)
+    supabase.from("word_lookups").insert({ word: normalized, source: "api" }).then(() => {});
 
     // 4) RETURN the parsed AI response (keeps same API output as before)
     res.json(parsed);
