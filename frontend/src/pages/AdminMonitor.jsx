@@ -84,8 +84,8 @@ function DualLineChart({ data, color1 = "#1d4ed8", color2 = "#7c3aed", chartId =
       <path d={makeArea(vPts)} fill={`url(#vg-${chartId})`} />
 
       {/* Lines */}
-      <path d={makeLine(sPts)} fill="none" stroke={color1} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-      <path d={makeLine(vPts)} fill="none" stroke={color2} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d={makeLine(sPts)} fill="none" stroke={color1} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d={makeLine(vPts)} fill="none" stroke={color2} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
 
       {/* Hover vertical line + dots */}
       {hov && (
