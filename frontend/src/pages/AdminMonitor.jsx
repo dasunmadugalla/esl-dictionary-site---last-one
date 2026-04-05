@@ -11,21 +11,24 @@ import {
 const ADMIN_EMAILS = import.meta.env.VITE_ADMIN_EMAILS?.split(",").map(e => e.trim()) ?? [];
 
 // ── Dual-line SVG chart ──────────────────────────────────────────
-function DualLineChart({ data, color1 = "#3b82f6", color2 = "#10b981" }) {
+function DualLineChart({ data, color1 = "#1d4ed8", color2 = "#7c3aed", chartId = "a" }) {
   const [hovered, setHovered] = useState(null);
-  const VW = 600, VH = 220, padX = 28, padTop = 28, padBottom = 44;
-  const chartH = VH - padTop - padBottom;
+
+  const VW = 620, VH = 240;
+  const padL = 40, padR = 16, padTop = 16, padBot = 40;
+  const chartW = VW - padL - padR;
+  const chartH = VH - padTop - padBot;
   const n = data.length;
   if (n < 2) return null;
 
   const maxVal = Math.max(...data.map(d => Math.max(d.searches, d.views)), 1);
+  const niceMax = Math.ceil(maxVal / 4) * 4 || 4;
+
+  const cx = (i) => padL + (i / (n - 1)) * chartW;
+  const cy = (v) => padTop + (1 - v / niceMax) * chartH;
 
   const pts = (key) => data.map((d, i) => ({
-    x: padX + (i / (n - 1)) * (VW - padX * 2),
-    y: padTop + (1 - d[key] / maxVal) * chartH,
-    val: d[key],
-    label: d.label,
-    showLabel: d.showLabel,
+    x: cx(i), y: cy(d[key]), val: d[key], label: d.label, showLabel: d.showLabel,
   }));
 
   const sPts = pts("searches");
@@ -34,60 +37,92 @@ function DualLineChart({ data, color1 = "#3b82f6", color2 = "#10b981" }) {
   function makeLine(p) {
     let d = `M ${p[0].x} ${p[0].y}`;
     for (let i = 1; i < p.length; i++) {
-      const mx = (p[i - 1].x + p[i].x) / 2;
+      const mx = (p[i-1].x + p[i].x) / 2;
       d += ` C ${mx} ${p[i-1].y} ${mx} ${p[i].y} ${p[i].x} ${p[i].y}`;
     }
     return d;
   }
-
   function makeArea(p) {
-    return `${makeLine(p)} L ${p[p.length-1].x} ${padTop + chartH} L ${p[0].x} ${padTop + chartH} Z`;
+    return `${makeLine(p)} L ${p[p.length-1].x} ${padTop+chartH} L ${p[0].x} ${padTop+chartH} Z`;
   }
+
+  // 4 horizontal grid lines
+  const gridSteps = [0.25, 0.5, 0.75, 1];
+
+  const hov = hovered !== null ? { sp: sPts[hovered], vp: vPts[hovered], label: data[hovered].label } : null;
+  const TW = 118, TH = 62;
 
   return (
     <svg viewBox={`0 0 ${VW} ${VH}`} width="100%" className="am-chart-svg">
       <defs>
-        <linearGradient id="am-sg" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={color1} stopOpacity="0.13" />
+        <linearGradient id={`sg-${chartId}`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={color1} stopOpacity="0.18" />
           <stop offset="100%" stopColor={color1} stopOpacity="0" />
         </linearGradient>
-        <linearGradient id="am-vg" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={color2} stopOpacity="0.1" />
+        <linearGradient id={`vg-${chartId}`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={color2} stopOpacity="0.14" />
           <stop offset="100%" stopColor={color2} stopOpacity="0" />
         </linearGradient>
       </defs>
 
-      <path d={makeArea(sPts)} fill="url(#am-sg)" />
-      <path d={makeArea(vPts)} fill="url(#am-vg)" />
-      <path d={makeLine(sPts)} fill="none" stroke={color1} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-      <path d={makeLine(vPts)} fill="none" stroke={color2} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-
-      {sPts.map((sp, i) => {
-        const vp = vPts[i];
-        const isHov = hovered === i;
+      {/* Grid lines + y-axis labels */}
+      {gridSteps.map(pct => {
+        const gy = cy(niceMax * pct);
+        const lbl = Math.round(niceMax * pct);
         return (
-          <g key={i} onMouseEnter={() => setHovered(i)} onMouseLeave={() => setHovered(null)} style={{ cursor: "default" }}>
-            <rect x={sp.x - 14} y={padTop} width={28} height={chartH} fill="transparent" />
-
-            {isHov && (
-              <>
-                <line x1={sp.x} y1={padTop} x2={sp.x} y2={padTop + chartH} stroke="var(--border)" strokeWidth="1" strokeDasharray="3 3" />
-                <rect x={sp.x - 22} y={sp.y - 26} width={44} height={18} rx={4} fill={color1} />
-                <text x={sp.x} y={sp.y - 13} textAnchor="middle" fill="#fff" fontSize="10" fontWeight="700">{sp.val}</text>
-                <rect x={vp.x - 22} y={vp.y - 26} width={44} height={18} rx={4} fill={color2} />
-                <text x={vp.x} y={vp.y - 13} textAnchor="middle" fill="#fff" fontSize="10" fontWeight="700">{vp.val}</text>
-              </>
-            )}
-
-            <circle cx={sp.x} cy={sp.y} r={isHov ? 5 : 3} fill={color1} />
-            <circle cx={vp.x} cy={vp.y} r={isHov ? 5 : 3} fill={color2} />
-
-            {sp.showLabel && (
-              <text x={sp.x} y={VH - 6} textAnchor="middle" fill="var(--text-muted)" fontSize="10">{sp.label}</text>
-            )}
+          <g key={pct}>
+            <line x1={padL} y1={gy} x2={VW - padR} y2={gy} stroke="var(--border)" strokeWidth="1" strokeOpacity="0.7" />
+            <text x={padL - 6} y={gy + 4} textAnchor="end" fill="var(--text-3)" fontSize="9" fontFamily="inherit">{lbl}</text>
           </g>
         );
       })}
+      {/* Zero line */}
+      <line x1={padL} y1={padTop + chartH} x2={VW - padR} y2={padTop + chartH} stroke="var(--border)" strokeWidth="1" />
+
+      {/* Area fills */}
+      <path d={makeArea(sPts)} fill={`url(#sg-${chartId})`} />
+      <path d={makeArea(vPts)} fill={`url(#vg-${chartId})`} />
+
+      {/* Lines */}
+      <path d={makeLine(sPts)} fill="none" stroke={color1} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d={makeLine(vPts)} fill="none" stroke={color2} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+
+      {/* Hover vertical line + dots */}
+      {hov && (
+        <>
+          <line x1={hov.sp.x} y1={padTop} x2={hov.sp.x} y2={padTop + chartH} stroke="var(--border)" strokeWidth="1" strokeDasharray="4 3" />
+          <circle cx={hov.sp.x} cy={hov.sp.y} r={6} fill="var(--bg-card)" />
+          <circle cx={hov.sp.x} cy={hov.sp.y} r={4} fill={color1} />
+          <circle cx={hov.vp.x} cy={hov.vp.y} r={6} fill="var(--bg-card)" />
+          <circle cx={hov.vp.x} cy={hov.vp.y} r={4} fill={color2} />
+          {(() => {
+            const tx = Math.min(Math.max(hov.sp.x - TW / 2, padL), VW - padR - TW);
+            const ty = padTop + 6;
+            return (
+              <>
+                <rect x={tx} y={ty} width={TW} height={TH} rx={7} fill="var(--bg-card)" stroke="var(--border)" strokeWidth="1" />
+                <text x={tx + 10} y={ty + 16} fill="var(--text-2)" fontSize="10" fontWeight="700" fontFamily="inherit">{hov.label}</text>
+                <circle cx={tx + 12} cy={ty + 30} r={3.5} fill={color1} />
+                <text x={tx + 21} y={ty + 34} fill="var(--text-2)" fontSize="10" fontFamily="inherit">{hov.sp.val}</text>
+                <circle cx={tx + 12} cy={ty + 47} r={3.5} fill={color2} />
+                <text x={tx + 21} y={ty + 51} fill="var(--text-2)" fontSize="10" fontFamily="inherit">{hov.vp.val}</text>
+              </>
+            );
+          })()}
+        </>
+      )}
+
+      {/* Invisible hover hit areas (on top) */}
+      {sPts.map((sp, i) => (
+        <rect key={i} x={sp.x - 14} y={padTop} width={28} height={chartH}
+          fill="transparent" style={{ cursor: "default" }}
+          onMouseEnter={() => setHovered(i)} onMouseLeave={() => setHovered(null)} />
+      ))}
+
+      {/* X-axis labels */}
+      {sPts.map((sp, i) => sp.showLabel && (
+        <text key={i} x={sp.x} y={VH - 6} textAnchor="middle" fill="var(--text-3)" fontSize="9" fontFamily="inherit">{sp.label}</text>
+      ))}
     </svg>
   );
 }
@@ -444,8 +479,8 @@ export default function AdminMonitor() {
                 <div>
                   <h2 className="am-section-title">Activity</h2>
                   <div className="am-section-legend">
-                    <span className="am-legend-dot" style={{ background: "#3b82f6" }} />Searches
-                    <span className="am-legend-dot" style={{ background: "#10b981" }} />Word views
+                    <span className="am-legend-dot" style={{ background: "#1d4ed8" }} />Searches
+                    <span className="am-legend-dot" style={{ background: "#7c3aed" }} />Word views
                   </div>
                 </div>
                 <div className="chart-timeframe-toggle">
@@ -473,7 +508,7 @@ export default function AdminMonitor() {
                 </div>
               </div>
               <div className="am-chart-wrap">
-                <DualLineChart data={chartData} />
+                <DualLineChart data={chartData} chartId="activity" />
               </div>
             </div>
 
@@ -483,8 +518,8 @@ export default function AdminMonitor() {
                 <div>
                   <h2 className="am-section-title">DB Cache vs AI Generations</h2>
                   <div className="am-section-legend">
-                    <span className="am-legend-dot" style={{ background: "#3b82f6" }} />DB hits
-                    <span className="am-legend-dot" style={{ background: "#f59e0b" }} />API generations
+                    <span className="am-legend-dot" style={{ background: "#1d4ed8" }} />DB hits
+                    <span className="am-legend-dot" style={{ background: "#7c3aed" }} />API generations
                   </div>
                 </div>
                 <div className="chart-timeframe-toggle">
@@ -511,7 +546,7 @@ export default function AdminMonitor() {
                 </div>
               </div>
               <div className="am-chart-wrap">
-                <DualLineChart data={luChartData} color1="#3b82f6" color2="#f59e0b" />
+                <DualLineChart data={luChartData} chartId="lookups" />
               </div>
             </div>
 
@@ -560,8 +595,8 @@ export default function AdminMonitor() {
                 <div>
                   <h2 className="am-section-title">Page Views</h2>
                   <div className="am-section-legend">
-                    <span className="am-legend-dot" style={{ background: "#f472b6" }} />Page views
-                    <span className="am-legend-dot" style={{ background: "#10b981" }} />Downloads
+                    <span className="am-legend-dot" style={{ background: "#1d4ed8" }} />Page views
+                    <span className="am-legend-dot" style={{ background: "#7c3aed" }} />Downloads
                   </div>
                 </div>
                 <div className="chart-timeframe-toggle">
@@ -585,7 +620,7 @@ export default function AdminMonitor() {
                 </div>
               </div>
               <div className="am-chart-wrap">
-                <DualLineChart data={pvChartData} />
+                <DualLineChart data={pvChartData} chartId="pageviews" />
               </div>
               {stats.topPages.length > 0 && (
                 <div className="am-section-body">
